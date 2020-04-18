@@ -7,3 +7,4 @@ obj/*
 .vscode
 .clangd
 .clangd/*
+compile_commands.json
