@@ -1,0 +1,9 @@
+*.o
+output/enumy
+.gdb*
+*peda*
+obj/*
+.vscode/*
+.vscode
+.clangd
+.clangd/*
