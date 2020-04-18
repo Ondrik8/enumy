@@ -1,4 +1,9 @@
+/*
+    This file handles all of the Ncurses GUI functionality
+*/
+
 #include "gui.h"
+#include "utils.h"
 #include "results.h"
 
 #include <locale.h>
@@ -54,6 +59,10 @@ void init_ncurses_layout(Ncurses_Layout *layout, All_Results *all_results)
     pthread_t logo_eye_blink_thread, update_res_thread;
 
     UpdateGuiArgs *gui_args_ptr = (UpdateGuiArgs *)malloc(sizeof(UpdateGuiArgs));
+    if (gui_args_ptr == NULL)
+    {
+        out_of_memory_err();
+    }
     gui_args_ptr->all_results = all_results;
     gui_args_ptr->layout = layout;
 
@@ -426,6 +435,10 @@ void update_bars(All_Results *all_results, Ncurses_Layout *layout)
 
     // print high bar
     line_to_print_ptr = (char *)malloc((int)floor(high_bar_len) + 1);
+    if (line_to_print_ptr == NULL)
+    {
+        out_of_memory_err();
+    }
     memset(line_to_print_ptr, bar, (int)floor(high_bar_len));
     line_to_print_ptr[(int)floor(high_bar_len)] = '\0';
     mvwprintw(layout->bars, 1, starting_x, "%s", line_to_print_ptr);
@@ -433,6 +446,10 @@ void update_bars(All_Results *all_results, Ncurses_Layout *layout)
 
     // print medium bar
     line_to_print_ptr = (char *)malloc((int)floor(medium_bar_len) + 1);
+    if (line_to_print_ptr == NULL)
+    {
+        out_of_memory_err();
+    }
     memset(line_to_print_ptr, bar, (int)floor(medium_bar_len));
     line_to_print_ptr[(int)floor(medium_bar_len)] = '\0';
     mvwprintw(layout->bars, 2, starting_x, "%s", line_to_print_ptr);
@@ -440,6 +457,10 @@ void update_bars(All_Results *all_results, Ncurses_Layout *layout)
 
     // print low bar
     line_to_print_ptr = (char *)malloc((int)floor(low_bar_len) + 1);
+    if (line_to_print_ptr == NULL)
+    {
+        out_of_memory_err();
+    }
     memset(line_to_print_ptr, bar, (int)floor(low_bar_len));
     line_to_print_ptr[(int)floor(low_bar_len)] = '\0';
     mvwprintw(layout->bars, 3, starting_x, "%s", line_to_print_ptr);
@@ -447,6 +468,10 @@ void update_bars(All_Results *all_results, Ncurses_Layout *layout)
 
     // print info bar
     line_to_print_ptr = (char *)malloc((int)floor(info_bar_len) + 1);
+    if (line_to_print_ptr == NULL)
+    {
+        out_of_memory_err();
+    }
     memset(line_to_print_ptr, bar, (int)floor(info_bar_len));
     line_to_print_ptr[(int)floor(info_bar_len)] = '\0';
     mvwprintw(layout->bars, 4, starting_x, "%s", line_to_print_ptr);

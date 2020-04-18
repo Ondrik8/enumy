@@ -10,17 +10,17 @@ You can download the final binary from the release x86 or x64 tab. _Statically l
 
 ## Usage
 
-Transfer the final enumyy binary to the target machine
+Transfer the final enumy binary to the target machine
 
 ## Compilation
 
-To compile during devlopment, make is all that is required.
+To compile during devlopment, make and the ncurses libary is all that is required.
 
 ```shell
 make
 ```
 
-To remove the glibc dependency and compile with musl do the following.
+To remove the glibc dependency and compile with musl do the following. Note to do this you will have to have docker installed to create the apline build environment.
 
 ```shell
 ./build.sh

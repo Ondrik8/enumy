@@ -1,3 +1,7 @@
+/*
+    This is the entry point for the program it's job is to parse command line 
+    output and spawn the relevant threads. 
+*/
 #include <getopt.h>
 #include <locale.h>
 #include <unistd.h>
@@ -168,6 +172,7 @@ int main(int argc, char *argv[], char *envp[])
         endwin();
         return 0;
     }
+    puts("Starting scan");
     start_scan(&nlayout, all_results, args);
 
     return 0;

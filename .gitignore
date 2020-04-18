@@ -8,3 +8,4 @@ obj/*
 .clangd
 .clangd/*
 compile_commands.json
+enumy

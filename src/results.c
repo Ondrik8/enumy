@@ -1,7 +1,28 @@
+/*
+    This file holds all of the functions relating to storing, appending 
+    and retriving results found from scans. There are four categories for 
+    results high, medium, low, info 
+
+    High    ->  Critical issues that should be exploitable during a CTF
+    
+    Medium  ->  Issues that could be could be exploitable or require certain 
+                conditions to be met to be exploitable 
+
+    Low     ->  Stuff you would report as a finding, but probably is not that 
+                useful durning a pentest 
+
+    Info    ->  Stuff that is not an issue but could be useful during a pentest
+                for example, current user, groups, running processes etc 
+    
+    These results are stored in the All_Results struct, this struct contains a 
+    pointer to the head of the linked list for each category
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include "results.h"
+#include "utils.h"
 
 All_Results *initilize_total_results();
 Result *create_new_issue();
@@ -39,6 +60,15 @@ All_Results *initilize_total_results()
     all_results->low = (struct Result *)malloc(sizeof(struct Result));
     all_results->info = (struct Result *)malloc(sizeof(struct Result));
 
+    if (
+        (all_results->high == NULL) ||
+        (all_results->medium == NULL) ||
+        (all_results->low == NULL) ||
+        (all_results->info == NULL))
+    {
+        out_of_memory_err();
+    }
+
     all_results->high_end_node = all_results->high;
     all_results->medium_end_node = all_results->medium;
     all_results->low_end_node = all_results->low;
@@ -58,6 +88,11 @@ All_Results *initilize_total_results()
 Result *create_new_issue()
 {
     struct Result *new_result = (struct Result *)malloc(sizeof(struct Result));
+
+    if (new_result == NULL)
+    {
+        out_of_memory_err();
+    }
 
     /* set the issues to invalid values so we can test if a new issue is commplete */
     new_result->issue_id == INCOMPLETE_ID;
