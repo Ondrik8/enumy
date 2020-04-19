@@ -18,7 +18,7 @@ typedef struct File_Info
     struct stat *stat;
 } File_Info;
 
-void walk_file_system(char *entry_location, All_Results *all_results);
+void walk_file_system(char *entry_location, All_Results *all_results, Args *cmdline);
 
 bool has_global_write(File_Info *f);
 bool has_global_read(File_Info *f);

@@ -23,6 +23,7 @@
 #include <string.h>
 #include "results.h"
 #include "utils.h"
+#include "main.h"
 
 #define URL "https://exploitwriteup.com/enumy-results/#"
 
@@ -40,10 +41,10 @@ void print_medium_results(All_Results *all_results);
 void print_low_results(All_Results *all_results);
 void print_info_results(All_Results *all_results);
 
-bool add_new_result_high(Result *new_result, All_Results *result);
-bool add_new_result_medium(Result *new_result, All_Results *result);
-bool add_new_result_low(Result *new_result, All_Results *result);
-bool add_new_result_info(Result *new_result, All_Results *result);
+bool add_new_result_high(Result *new_result, All_Results *result, Args *cmdline);
+bool add_new_result_medium(Result *new_result, All_Results *result, Args *cmdline);
+bool add_new_result_low(Result *new_result, All_Results *result, Args *cmdline);
+bool add_new_result_info(Result *new_result, All_Results *result, Args *cmdline);
 
 static void log_issue_to_screen(Result *new_result);
 static void print_result_set(Result *result_cat);
@@ -192,7 +193,7 @@ void print_info_results(All_Results *all_results)
 }
 
 // Adds a new fully completed issue to the High linked list
-bool add_new_result_high(Result *new_result, All_Results *all_results)
+bool add_new_result_high(Result *new_result, All_Results *all_results, Args *cmdline)
 {
     if (!is_complete(new_result))
         return false;
@@ -202,11 +203,16 @@ bool add_new_result_high(Result *new_result, All_Results *all_results)
     all_results->high_end_node = new_result;
     all_results->gui_requires_refresh = HIGH;
 
+    if (!cmdline->enabled_ncurses)
+    {
+        log_issue_to_screen(new_result);
+    }
+
     return true;
 }
 
 // Adds a new fully completed issue to the Medium linked list
-bool add_new_result_medium(Result *new_result, All_Results *all_results)
+bool add_new_result_medium(Result *new_result, All_Results *all_results, Args *cmdline)
 {
     if (!is_complete(new_result))
         return false;
@@ -216,11 +222,16 @@ bool add_new_result_medium(Result *new_result, All_Results *all_results)
     all_results->medium_end_node = new_result;
     all_results->gui_requires_refresh = MEDIUM;
 
+    if (!cmdline->enabled_ncurses)
+    {
+        log_issue_to_screen(new_result);
+    }
+
     return true;
 }
 
 // Adds a new fully completed issue to the Low linked list
-bool add_new_result_low(Result *new_result, All_Results *all_results)
+bool add_new_result_low(Result *new_result, All_Results *all_results, Args *cmdline)
 {
     if (!is_complete(new_result))
         return false;
@@ -230,11 +241,16 @@ bool add_new_result_low(Result *new_result, All_Results *all_results)
     all_results->low_end_node = new_result;
     all_results->gui_requires_refresh = LOW;
 
+    if (!cmdline->enabled_ncurses)
+    {
+        log_issue_to_screen(new_result);
+    }
+
     return true;
 }
 
 // Adds a new fully completed issue to the Info linked list
-bool add_new_result_info(Result *new_result, All_Results *all_results)
+bool add_new_result_info(Result *new_result, All_Results *all_results, Args *cmdline)
 {
     if (!is_complete(new_result))
         return false;
@@ -243,6 +259,11 @@ bool add_new_result_info(Result *new_result, All_Results *all_results)
 
     all_results->info_end_node = new_result;
     all_results->gui_requires_refresh = INFO;
+
+    if (!cmdline->enabled_ncurses)
+    {
+        log_issue_to_screen(new_result);
+    }
 
     return true;
 }

@@ -17,12 +17,10 @@
 #include <dirent.h>
 #include <limits.h>
 
-#define CHUNK_SIZE 1
-
 static void get_file_extension(char *buf, char *f_name);
-static void scan_file_for_issues(char *file_location, char *file_name, All_Results *all_results);
+static void scan_file_for_issues(char *file_location, char *file_name, All_Results *all_results, Args *cmdline);
 
-void walk_file_system(char *entry_location, All_Results *all_results)
+void walk_file_system(char *entry_location, All_Results *all_results, Args *cmdline)
 {
     DIR *dir;
     struct dirent *entry;
@@ -44,21 +42,21 @@ void walk_file_system(char *entry_location, All_Results *all_results)
             {
                 strcpy(file_location, entry_location);
                 strcat(file_location, entry->d_name);
-                scan_file_for_issues(file_location, entry->d_name, all_results);
+                scan_file_for_issues(file_location, entry->d_name, all_results, cmdline);
             }
             if (entry->d_type & DT_DIR)
             {
                 strcpy(file_location, entry_location);
                 strcat(file_location, entry->d_name);
                 strcat(file_location, "/");
-                walk_file_system(file_location, all_results);
+                walk_file_system(file_location, all_results, cmdline);
             }
         }
     }
     closedir(dir);
 }
 
-static void scan_file_for_issues(char *file_location, char *file_name, All_Results *all_results)
+static void scan_file_for_issues(char *file_location, char *file_name, All_Results *all_results, Args *cmdline)
 {
     struct File_Info *new_file = (File_Info *)malloc(sizeof(File_Info));
     struct stat *stat_buf = malloc(sizeof(struct stat));
@@ -81,8 +79,8 @@ static void scan_file_for_issues(char *file_location, char *file_name, All_Resul
         return;
     }
 
-    suid_bit_scan(new_file, all_results);
-    guid_bit_scan(new_file, all_results);
+    suid_bit_scan(new_file, all_results, cmdline);
+    guid_bit_scan(new_file, all_results, cmdline);
 }
 
 static void get_file_extension(char *buf, char *f_name)

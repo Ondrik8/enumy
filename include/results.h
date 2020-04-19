@@ -1,5 +1,7 @@
 #pragma once
 
+#include "main.h"
+
 #include <stdbool.h>
 
 #define HIGH 3
@@ -48,10 +50,10 @@ void set_issue_name(char *issue_name, Result *result_node);
 void set_issue_description(char *issue_description, Result *result_node);
 void set_issue_location(char *issue_location, Result *result_nodee);
 
-bool add_new_result_high(Result *new_result, All_Results *result);
-bool add_new_result_medium(Result *new_result, All_Results *result);
-bool add_new_result_low(Result *new_result, All_Results *result);
-bool add_new_result_info(Result *new_result, All_Results *result);
+bool add_new_result_high(Result *new_result, All_Results *result, Args *cmdline);
+bool add_new_result_medium(Result *new_result, All_Results *result, Args *cmdline);
+bool add_new_result_low(Result *new_result, All_Results *result, Args *cmdline);
+bool add_new_result_info(Result *new_result, All_Results *result, Args *cmdline);
 
 void print_all_results(All_Results *all_results);
 void print_high_results(All_Results *all_results);

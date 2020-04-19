@@ -7,6 +7,7 @@
 #include "results.h"
 #include "fs.h"
 #include "scan.h"
+#include "main.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -21,16 +22,16 @@ char *KNOW_GOOD_SUID[] = {
 
 };
 
-bool suid_bit_scan(File_Info *fi, All_Results *ar);
-bool guid_bit_scan(File_Info *fi, All_Results *ar);
+bool suid_bit_scan(File_Info *fi, All_Results *ar, Args *cmdline);
+bool guid_bit_scan(File_Info *fi, All_Results *ar, Args *cmdline);
 
 static bool has_normal_suid_name(File_Info *fi);
-static bool has_suid_and_global_write(File_Info *fi, All_Results *ar);
-static bool has_suid_and_group_write(File_Info *fi, All_Results *ar);
-static bool has_guid_and_global_write(File_Info *fi, All_Results *ar);
-static bool has_guid_and_group_write(File_Info *fi, All_Results *ar);
+static bool has_suid_and_global_write(File_Info *fi, All_Results *ar, Args *cmdline);
+static bool has_suid_and_group_write(File_Info *fi, All_Results *ar, Args *cmdline);
+static bool has_guid_and_global_write(File_Info *fi, All_Results *ar, Args *cmdline);
+static bool has_guid_and_group_write(File_Info *fi, All_Results *ar, Args *cmdline);
 
-bool suid_bit_scan(File_Info *fi, All_Results *ar)
+bool suid_bit_scan(File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 1;
     char *name = "Abnormal SUID enabled executable found";
@@ -46,16 +47,16 @@ bool suid_bit_scan(File_Info *fi, All_Results *ar)
     set_id_and_desc(id, new_result);
     set_issue_location(fi->location, new_result);
     set_issue_name(name, new_result);
-    add_new_result_medium(new_result, ar);
+    add_new_result_medium(new_result, ar, cmdline);
 
-    has_suid_and_global_write(fi, ar);
-    has_suid_and_group_write(fi, ar);
+    has_suid_and_global_write(fi, ar, cmdline);
+    has_suid_and_group_write(fi, ar, cmdline);
     return true;
 }
 
-bool guid_bit_scan(File_Info *fi, All_Results *ar)
+bool guid_bit_scan(File_Info *fi, All_Results *ar, Args *cmdline)
 {
-    int id = 3;
+    int id = 4;
     char *name = "Abnormal GUID enabled executable found";
 
     if (
@@ -69,10 +70,10 @@ bool guid_bit_scan(File_Info *fi, All_Results *ar)
     set_id_and_desc(id, new_result);
     set_issue_location(fi->location, new_result);
     set_issue_name(name, new_result);
-    add_new_result_medium(new_result, ar);
+    add_new_result_medium(new_result, ar, cmdline);
 
-    has_guid_and_global_write(fi, ar);
-    has_guid_and_group_write(fi, ar);
+    has_guid_and_global_write(fi, ar, cmdline);
+    has_guid_and_group_write(fi, ar, cmdline);
     return true;
 }
 
@@ -89,7 +90,7 @@ static bool has_normal_suid_name(File_Info *fi)
     return false;
 }
 
-static bool has_suid_and_global_write(File_Info *fi, All_Results *ar)
+static bool has_suid_and_global_write(File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 2;
     char *name = "SUID enabled executable with global write access";
@@ -104,14 +105,14 @@ static bool has_suid_and_global_write(File_Info *fi, All_Results *ar)
     set_id_and_desc(id, new_result);
     set_issue_location(fi->location, new_result);
     set_issue_name(name, new_result);
-    add_new_result_high(new_result, ar);
+    add_new_result_high(new_result, ar, cmdline);
 
     return true;
 }
 
-static bool has_suid_and_group_write(File_Info *fi, All_Results *ar)
+static bool has_suid_and_group_write(File_Info *fi, All_Results *ar, Args *cmdline)
 {
-    int id = 2;
+    int id = 3;
     char *name = "SUID enabled executable with group write access";
 
     if (!has_group_write(fi))
@@ -124,14 +125,14 @@ static bool has_suid_and_group_write(File_Info *fi, All_Results *ar)
     set_id_and_desc(id, new_result);
     set_issue_location(fi->location, new_result);
     set_issue_name(name, new_result);
-    add_new_result_high(new_result, ar);
+    add_new_result_high(new_result, ar, cmdline);
 
     return true;
 }
 
-static bool has_guid_and_global_write(File_Info *fi, All_Results *ar)
+static bool has_guid_and_global_write(File_Info *fi, All_Results *ar, Args *cmdline)
 {
-    int id = 4;
+    int id = 5;
     char *name = "GUID enabled executable with global write access";
 
     if (!has_global_write(fi))
@@ -144,14 +145,14 @@ static bool has_guid_and_global_write(File_Info *fi, All_Results *ar)
     set_id_and_desc(id, new_result);
     set_issue_location(fi->location, new_result);
     set_issue_name(name, new_result);
-    add_new_result_high(new_result, ar);
+    add_new_result_high(new_result, ar, cmdline);
 
     return true;
 }
 
-static bool has_guid_and_group_write(File_Info *fi, All_Results *ar)
+static bool has_guid_and_group_write(File_Info *fi, All_Results *ar, Args *cmdline)
 {
-    int id = 5;
+    int id = 6;
     char *name = "GUID enabled executable with group write access";
 
     if (!has_group_write(fi))
@@ -164,7 +165,7 @@ static bool has_guid_and_group_write(File_Info *fi, All_Results *ar)
     set_id_and_desc(id, new_result);
     set_issue_location(fi->location, new_result);
     set_issue_name(name, new_result);
-    add_new_result_high(new_result, ar);
+    add_new_result_high(new_result, ar, cmdline);
 
     return true;
 }
