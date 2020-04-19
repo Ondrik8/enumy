@@ -24,6 +24,8 @@
 #include "results.h"
 #include "utils.h"
 
+#define URL "https://exploitwriteup.com/enumy-results/#"
+
 All_Results *initilize_total_results();
 Result *create_new_issue();
 
@@ -111,6 +113,25 @@ void set_id(int issue_id, Result *result_node)
     result_node->issue_id = issue_id;
 }
 
+// Set id for the base issue and the description as a
+// link to the issue writeup on my website with the id being the
+// ancore point to the link
+void set_id_and_desc(int issue_id, Result *result_node)
+{
+    int length = snprintf(NULL, 0, "%d", issue_id);
+    char *str = malloc(length + 1);
+    if (str == NULL)
+    {
+        out_of_memory_err();
+    }
+    snprintf(str, length + 1, "%d", issue_id);
+
+    result_node->issue_id = issue_id;
+    strcpy(result_node->description, URL);
+    strcat(result_node->description, str);
+    free(str);
+}
+
 // Set issue name for the base issue
 void set_issue_name(char *issue_name, Result *result_node)
 {
@@ -126,7 +147,7 @@ void set_issue_description(char *issue_description, Result *result_node)
 // Set issue location for the base issue
 void set_issue_location(char *issue_location, Result *result_node)
 {
-    strncpy(result_node->location, issue_location, sizeof(result_node));
+    strncpy(result_node->location, issue_location, sizeof(result_node->location));
 }
 
 // Prints all the results in non ncurse mode

@@ -43,6 +43,7 @@ All_Results *initilize_total_results();
 
 Result *create_new_issue();
 void set_id(int issue_id, Result *result_node);
+void set_id_and_desc(int issue_id, Result *result_node);
 void set_issue_name(char *issue_name, Result *result_node);
 void set_issue_description(char *issue_description, Result *result_node);
 void set_issue_location(char *issue_location, Result *result_nodee);

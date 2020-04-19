@@ -348,7 +348,7 @@ void update_table(All_Results *all_results, Ncurses_Layout *layout)
             HORIZONTAL_BORDER, HORIZONTAL_BORDER,
             CORNER_SYMBOL, CORNER_SYMBOL, CORNER_SYMBOL, CORNER_SYMBOL);
 
-    mvwprintw(layout->main, 1, 1, "    %-10s%-30s%-60s%-60s",
+    mvwprintw(layout->main, 1, 1, "    %-5s%-50s%-80s%-100s",
               "ID", "Name", "Description", "Location");
 
     wrefresh(layout->main);
@@ -360,7 +360,7 @@ void update_table(All_Results *all_results, Ncurses_Layout *layout)
         {
             break;
         }
-        mvwprintw(layout->main, i, 1, "    %-10i%-30s%-60s%-60s%-10p",
+        mvwprintw(layout->main, i, 1, "    %-5i%-50s%-80s%-100s%-10p",
                   res_ptr->issue_id, res_ptr->issue_name,
                   res_ptr->description,
                   res_ptr->location, res_ptr->next);

@@ -7,7 +7,7 @@
 #include "fs.h"
 #include "utils.h"
 #include "results.h"
-// #include "scan_fs.h"
+#include "scan.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -19,8 +19,8 @@
 
 #define CHUNK_SIZE 1
 
-static void add_new_file(char *file_locationm, All_Results *all_results);
 static void get_file_extension(char *buf, char *f_name);
+static void scan_file_for_issues(char *file_location, char *file_name, All_Results *all_results);
 
 void walk_file_system(char *entry_location, All_Results *all_results)
 {
@@ -44,7 +44,7 @@ void walk_file_system(char *entry_location, All_Results *all_results)
             {
                 strcpy(file_location, entry_location);
                 strcat(file_location, entry->d_name);
-                add_new_file(file_location, all_results);
+                scan_file_for_issues(file_location, entry->d_name, all_results);
             }
             if (entry->d_type & DT_DIR)
             {
@@ -58,7 +58,7 @@ void walk_file_system(char *entry_location, All_Results *all_results)
     closedir(dir);
 }
 
-static void add_new_file(char *file_location, All_Results *all_results)
+static void scan_file_for_issues(char *file_location, char *file_name, All_Results *all_results)
 {
     struct File_Info *new_file = (File_Info *)malloc(sizeof(File_Info));
     struct stat *stat_buf = malloc(sizeof(struct stat));
@@ -69,12 +69,20 @@ static void add_new_file(char *file_location, All_Results *all_results)
     }
 
     strcpy(new_file->location, file_location);
+    strcpy(new_file->name, file_name);
     get_file_extension(new_file->extension, file_location);
 
-    if (stat(file_location, stat_buf) == 0)
+    if (lstat(file_location, stat_buf) == 0)
     {
         new_file->stat = stat_buf;
     }
+    else
+    {
+        return;
+    }
+
+    suid_bit_scan(new_file, all_results);
+    guid_bit_scan(new_file, all_results);
 }
 
 static void get_file_extension(char *buf, char *f_name)
@@ -104,14 +112,24 @@ static void get_file_extension(char *buf, char *f_name)
     buf[0] = '\0';
 }
 
+bool has_global_read(File_Info *f)
+{
+    return f->stat->st_mode & S_IROTH;
+}
+
 bool has_global_write(File_Info *f)
 {
     return f->stat->st_mode & S_IWOTH;
 }
 
-bool has_global_read(File_Info *f)
+bool has_global_execute(File_Info *f)
 {
-    return f->stat->st_mode & S_IROTH;
+    return f->stat->st_mode & S_IXOTH;
+}
+
+bool has_group_write(File_Info *f)
+{
+    return f->stat->st_mode & S_IRGRP;
 }
 
 bool has_suid(File_Info *f)
