@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <unistd.h>
 
+#include "results.h"
+
 #define MAX_FILE_SIZE 1024
 #define MAX_EXTENSION_SIZE 16
 
@@ -13,17 +15,7 @@ typedef struct File_Info
     struct stat *stat;
 } File_Info;
 
-typedef struct Total_Files
-{
-    struct File_Info **file_array;
-    int tot_files;
-    int size;
-} Total_Files;
-
-void walk_file_system(char *entry_location, Total_Files *total_files);
-void print_all_file_info(Total_Files *total_files);
-
-Total_Files *init_total_files();
+void walk_file_system(char *entry_location, All_Results *all_results);
 
 bool has_global_write(File_Info *f);
 bool has_global_read(File_Info *f);

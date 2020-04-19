@@ -17,7 +17,7 @@
 typedef struct Walk_Args
 {
     char *walk_path;
-    Total_Files *total_files;
+    All_Results *all_results;
 } Walk_Args;
 
 static void *create_walk_thread(void *args);
@@ -25,10 +25,10 @@ static void *create_walk_thread(void *args);
 static void *create_walk_thread(void *args)
 {
     Walk_Args *arguments = (Walk_Args *)args;
-    Total_Files *total_files = arguments->total_files;
+    All_Results *all_results = arguments->all_results;
     char *walk_path = arguments->walk_path;
 
-    walk_file_system(walk_path, total_files);
+    walk_file_system(walk_path, all_results);
 
     return NULL;
 }
@@ -38,17 +38,11 @@ void start_scan(Ncurses_Layout *layout, All_Results *all_results, Args args)
     pthread_t walk_thread;
     char *_;
     bool ncurses_enabled = args.enabled_ncurses;
-    Total_Files *total_files = init_total_files();
 
     struct Walk_Args walk_args = {
         .walk_path = "/",
-        .total_files = total_files,
+        .all_results = all_results,
     };
-
-    if (total_files == NULL)
-    {
-        out_of_memory_err();
-    }
 
     if (!ncurses_enabled)
     {
