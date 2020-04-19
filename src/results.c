@@ -95,10 +95,10 @@ Result *create_new_issue()
     }
 
     /* set the issues to invalid values so we can test if a new issue is commplete */
-    new_result->issue_id == INCOMPLETE_ID;
+    new_result->issue_id = INCOMPLETE_ID;
     new_result->issue_name[0] = '\0';
     new_result->description[0] = '\0';
-    new_result->location[0] == '\0';
+    new_result->location[0] = '\0';
     new_result->next = NULL;
     new_result->previous = NULL;
 
@@ -124,9 +124,9 @@ void set_issue_description(char *issue_description, Result *result_node)
 }
 
 // Set issue location for the base issue
-void set_issue_location(char *issue_location, Result *result_nodee)
+void set_issue_location(char *issue_location, Result *result_node)
 {
-    strncpy(result_nodee->location, issue_location, sizeof(issue_location));
+    strncpy(result_node->location, issue_location, sizeof(result_node));
 }
 
 // Prints all the results in non ncurse mode
@@ -226,7 +226,7 @@ bool add_new_result_info(Result *new_result, All_Results *all_results)
     return true;
 }
 
-// Tests to sure that issue stuct is completed
+// Tests to make sure that issue stuct is completed
 // has side effect of printing incomplete structs
 static bool is_complete(Result *new_result)
 {

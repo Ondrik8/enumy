@@ -323,12 +323,13 @@ static void *update_gui(void *gui_args)
         if (all_results->gui_requires_refresh == layout->current_category)
         {
             update_table(all_results, layout);
-            all_results->gui_requires_refresh == NO_REFRESH;
+            all_results->gui_requires_refresh = NO_REFRESH;
         }
         update_table(all_results, layout);
         update_bars(all_results, layout);
         sleep(UPDATE_SECS);
     }
+    return NULL;
 }
 
 void update_table(All_Results *all_results, Ncurses_Layout *layout)
@@ -376,10 +377,10 @@ void update_bars(All_Results *all_results, Ncurses_Layout *layout)
     double high_bar_len, medium_bar_len, low_bar_len, info_bar_len;
     int high_tot, medium_tot, low_tot, info_tot, all_tot;
     double starting_x = 14; // The boiler plate text takes up 13 characters per line
-    int x, y, x_avilable;
+    int x, x_avilable;
+    int __attribute__((unused)) y;
     int max = 1;
     char bar = '=';
-    int n;
     double multiplyer;
     char *line_to_print_ptr;
 

@@ -34,8 +34,11 @@ typedef struct UserInputThreadArgs
 
 void sigint_handler(int sig)
 {
-    endwin();
-    exit(0);
+    if (sig == SIGINT)
+    {
+        endwin();
+        exit(0);
+    }
 }
 
 void banner()
@@ -110,12 +113,12 @@ void *handle_user_input(void *user_input_args)
     return NULL;
 }
 
-int main(int argc, char *argv[], char *envp[])
+int main(int argc, char *argv[])
 {
     int opt;
 
     struct Args args = {
-        .save_location = '\0',
+        .save_location = {'\0'},
         .enabled_all_scans = true,
         .enabled_quick_scans = false,
         .enabled_ncurses = true};

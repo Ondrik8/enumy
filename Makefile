@@ -9,6 +9,8 @@ OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 CPPFLAGS := -Iinclude
 LDFLAGS  := -Llib
 LDLIBS := -lm
+CFLAGS := -W -Wall 
+
 .PHONY: all clean
 
 all: $(EXE)

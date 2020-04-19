@@ -21,5 +21,12 @@ typedef struct Total_Files
 } Total_Files;
 
 void walk_file_system(char *entry_location, Total_Files *total_files);
-Total_Files *init_total_files();
 void print_all_file_info(Total_Files *total_files);
+
+Total_Files *init_total_files();
+
+bool has_global_write(File_Info *f);
+bool has_global_read(File_Info *f);
+bool has_suid(File_Info *f);
+bool has_guid(File_Info *f);
+bool has_extension(File_Info *f, char *extension);

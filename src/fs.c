@@ -44,8 +44,6 @@ void walk_file_system(char *entry_location, Total_Files *total_files)
 {
     DIR *dir;
     struct dirent *entry;
-    struct stat *statbuf;
-    const char *d_name;
     char file_location[MAX_FILE_SIZE];
 
     dir = opendir(entry_location);
@@ -106,7 +104,6 @@ static void add_new_file(Total_Files *total_files, char *file_location)
             out_of_memory_err();
         }
     }
-    printf("Size %i\n", total_files->tot_files);
     total_files->file_array[total_files->tot_files] = new_file;
     total_files->tot_files++;
 }
@@ -140,9 +137,33 @@ static void get_file_extension(char *buf, char *f_name)
 
 void print_all_file_info(Total_Files *total_files)
 {
-    puts("File info");
     for (int x = 0; x < total_files->tot_files; x++)
     {
         printf("%s\n", total_files->file_array[x]->location);
     }
+}
+
+bool has_global_write(File_Info *f)
+{
+    return f->stat->st_mode & S_IWOTH;
+}
+
+bool has_global_read(File_Info *f)
+{
+    return f->stat->st_mode & S_IROTH;
+}
+
+bool has_suid(File_Info *f)
+{
+    return f->stat->st_mode & S_ISUID;
+}
+
+bool has_guid(File_Info *f)
+{
+    return f->stat->st_mode & S_ISGID;
+}
+
+bool has_extension(File_Info *f, char *extension)
+{
+    return strcmp(f->extension, extension);
 }

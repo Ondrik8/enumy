@@ -5,7 +5,7 @@ void print_die(char *msg)
 {
     do
     {
-        fprintf(stderr, msg);
+        fprintf(stderr, "%s", msg);
         abort();
     } while (0);
 }
