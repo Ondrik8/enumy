@@ -55,14 +55,3 @@ void start_scan(Ncurses_Layout *layout, All_Results *all_results, Args *args)
     pthread_create(&walk_thread, NULL, &create_walk_thread, &walk_args);
     pthread_join(walk_thread, (void **)&_);
 }
-
-// void add_info(All_Results *all_results)
-// {
-//     Result *new_issue = create_new_issue();
-
-//     set_id(110, new_issue);
-//     set_issue_description("EXAMPLE issue", new_issue);
-//     set_issue_location("/tmp/TEST", new_issue);
-//     set_issue_name("EXAMPLE", new_issue);
-//     add_new_result_info(new_issue, all_results);
-// }

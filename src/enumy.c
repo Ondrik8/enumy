@@ -175,7 +175,9 @@ int main(int argc, char *argv[])
         endwin();
         return 0;
     }
-    puts("Starting scan");
+    puts("");
+    banner();
+    puts("\nStarting scan");
     start_scan(&nlayout, all_results, args);
 
     return 0;

@@ -60,6 +60,7 @@ static void scan_file_for_issues(char *file_location, char *file_name, All_Resul
 {
     struct File_Info *new_file = (File_Info *)malloc(sizeof(File_Info));
     struct stat *stat_buf = malloc(sizeof(struct stat));
+    int findings = 0;
 
     if ((new_file == NULL) || (stat_buf == NULL))
     {
@@ -79,8 +80,13 @@ static void scan_file_for_issues(char *file_location, char *file_name, All_Resul
         return;
     }
 
-    suid_bit_scan(new_file, all_results, cmdline);
-    guid_bit_scan(new_file, all_results, cmdline);
+    findings += suid_bit_scan(new_file, all_results, cmdline);
+    findings += guid_bit_scan(new_file, all_results, cmdline);
+
+    if (findings > 1)
+    {
+        printf("\n");
+    }
 }
 
 static void get_file_extension(char *buf, char *f_name)
@@ -127,7 +133,7 @@ bool has_global_execute(File_Info *f)
 
 bool has_group_write(File_Info *f)
 {
-    return f->stat->st_mode & S_IRGRP;
+    return f->stat->st_mode & S_IWGRP;
 }
 
 bool has_suid(File_Info *f)

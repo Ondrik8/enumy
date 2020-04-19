@@ -14,15 +14,16 @@ Transfer the final enumy binary to the target machine
 
 ## Compilation
 
-To compile during devlopment, make and the ncurses libary is all that is required.
+To compile during devlopment, make libcap and the ncurses libary is all that is required.
 
 ```shell
 make
 ```
 
-To remove the glibc dependency and compile with musl do the following. Note to do this you will have to have docker installed to create the apline build environment.
+To remove the glibc dependency and statically link all libaries/compile with musl do the following. _Note to do this you will have to have docker installed to create the apline build environment._
 
 ```shell
-./build.sh
+./build.sh 64bit
+./build.sh 32bit
 cd output
 ```

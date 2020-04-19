@@ -25,7 +25,13 @@
 #include "utils.h"
 #include "main.h"
 
-#define URL "https://exploitwriteup.com/enumy-results/#"
+#define COLOR_HIGH "\033[0;31m"   // red
+#define COLOR_MEDIUM "\033[0;33m" // yellow
+#define COLOR_LOW "\033[0;36m"    // blue
+#define COLOR_INFO "\033[0;32m"   // green
+#define COLOR_RESET "\033[0m"
+
+#define URL "https://www.exploitwriteup.com/enumy-results/#"
 
 All_Results *initilize_total_results();
 Result *create_new_issue();
@@ -46,7 +52,7 @@ bool add_new_result_medium(Result *new_result, All_Results *result, Args *cmdlin
 bool add_new_result_low(Result *new_result, All_Results *result, Args *cmdline);
 bool add_new_result_info(Result *new_result, All_Results *result, Args *cmdline);
 
-static void log_issue_to_screen(Result *new_result);
+static void log_issue_to_screen(Result *new_result, char *severity);
 static void print_result_set(Result *result_cat);
 static bool is_complete(Result *new_result);
 static void add_new_issue(Result *new_result, All_Results *all_results, int category);
@@ -205,7 +211,7 @@ bool add_new_result_high(Result *new_result, All_Results *all_results, Args *cmd
 
     if (!cmdline->enabled_ncurses)
     {
-        log_issue_to_screen(new_result);
+        log_issue_to_screen(new_result, "High");
     }
 
     return true;
@@ -224,7 +230,7 @@ bool add_new_result_medium(Result *new_result, All_Results *all_results, Args *c
 
     if (!cmdline->enabled_ncurses)
     {
-        log_issue_to_screen(new_result);
+        log_issue_to_screen(new_result, "Medium");
     }
 
     return true;
@@ -243,7 +249,7 @@ bool add_new_result_low(Result *new_result, All_Results *all_results, Args *cmdl
 
     if (!cmdline->enabled_ncurses)
     {
-        log_issue_to_screen(new_result);
+        log_issue_to_screen(new_result, "Low");
     }
 
     return true;
@@ -262,7 +268,7 @@ bool add_new_result_info(Result *new_result, All_Results *all_results, Args *cmd
 
     if (!cmdline->enabled_ncurses)
     {
-        log_issue_to_screen(new_result);
+        log_issue_to_screen(new_result, "Info");
     }
 
     return true;
@@ -281,19 +287,45 @@ static bool is_complete(Result *new_result)
         return true;
     }
 
-    log_issue_to_screen(new_result);
+    log_issue_to_screen(new_result, "Failed");
     return false;
 }
 
 /* Only called if programmer forgot to set all values 
 of the struct before adding to linked list */
-static void log_issue_to_screen(Result *new_result)
+static void log_issue_to_screen(Result *new_result, char *category)
 {
-    printf("Programming error:");
-    printf("issue_id: %i\n", new_result->issue_id);
-    printf("issue_name: %s\n", new_result->issue_name);
-    printf("description: %s\n", new_result->description);
-    printf("location: %s\n", new_result->location);
+    char ls_cmd[1024];
+    char ls_result[1024];
+    char *color_code;
+
+    snprintf(ls_cmd, 1023, "ls -ltra %s --color=always", new_result->location);
+    FILE *fp = popen(ls_cmd, "r");
+    while (fgets(ls_result, sizeof(ls_result), fp) != NULL)
+    {
+    }
+
+    if (strcmp(category, "High") == 0)
+    {
+        color_code = COLOR_HIGH;
+    }
+    else if (strcmp(category, "Medium") == 0)
+    {
+        color_code = COLOR_MEDIUM;
+    }
+    else if (strcmp(category, "Low") == 0)
+    {
+        color_code = COLOR_LOW;
+    }
+    else
+    {
+        color_code = COLOR_INFO;
+    }
+
+    printf("Severity: %s%-7s%s Name: %-50s",
+           color_code, category, COLOR_RESET,
+           new_result->issue_name);
+    printf("%s", ls_result);
 }
 
 static void print_result_set(Result *result_cat)
