@@ -80,6 +80,14 @@ static void scan_file_for_issues(char *file_location, char *file_name, All_Resul
         return;
     }
 
+    // Ignore symlinks
+    if (S_ISLNK(stat_buf->st_mode))
+    {
+        free(stat_buf);
+        free(new_file);
+        return;
+    }
+
     findings += suid_bit_scan(new_file, all_results, cmdline);
     findings += guid_bit_scan(new_file, all_results, cmdline);
     findings += capabilities_scan(new_file, all_results, cmdline);
@@ -88,6 +96,8 @@ static void scan_file_for_issues(char *file_location, char *file_name, All_Resul
     {
         printf("\n");
     }
+    free(stat_buf);
+    free(new_file);
 }
 
 static void get_file_extension(char *buf, char *f_name)

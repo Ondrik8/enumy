@@ -23,6 +23,31 @@ static bool check_fowner(cap_t caps_for_file, File_Info *fi, All_Results *ar, Ar
 static bool check_clear_set_id(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_ipc_lock(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_ipc_owner(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_kill(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_lease(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_immutable(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_mac_admin(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_mac_override(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_mknod(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_net_admin(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_net_bind_service(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_net_broadcast(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_net_raw(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_set_gid(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_set_cap(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_set_pcap(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_set_uid(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_sys_admin(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_reboot(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_sys_chroot(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_sys_module(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_process_accounting(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_ptrace(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_sys_resource(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_sys_time(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_sys_tty(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_syslog(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+
 static int check_cap(cap_t caps_for_file, cap_value_t search);
 static void print_cap(char *fname, cap_t cap);
 static void set_other_info_to_cap_flag(cap_flag_t flag, Result *new_result);
@@ -62,6 +87,30 @@ int capabilities_scan(File_Info *fi, All_Results *ar, Args *cmdline)
     findings = (check_clear_set_id(cap, fi, ar, cmdline) == true) ? findings++ : findings;
     findings = (check_ipc_lock(cap, fi, ar, cmdline) == true) ? findings++ : findings;
     findings = (check_ipc_owner(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_kill(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_lease(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_immutable(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_mac_admin(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_mac_override(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_mknod(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_net_admin(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_net_bind_service(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_net_broadcast(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_net_raw(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_set_gid(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_set_cap(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_set_pcap(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_set_uid(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_sys_admin(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_reboot(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_sys_chroot(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_sys_module(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_process_accounting(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_ptrace(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_sys_resource(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_sys_time(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_sys_tty(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings = (check_syslog(cap, fi, ar, cmdline) == true) ? findings++ : findings;
 
     cap_free(cap);
     close(fd);
@@ -289,6 +338,506 @@ static bool check_ipc_owner(cap_t caps_for_file, File_Info *fi, All_Results *ar,
         set_issue_name(name, new_result);
         set_other_info_to_cap_flag(cap_value, new_result);
         add_new_result_medium(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_KILL
+// Bypass permisssion checks for ssending signals
+static bool check_kill(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 18;
+    char *name = "CAP_KILL capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_KILL);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_medium(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_LEASE
+// Establish leases on arbitrary files
+static bool check_lease(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 19;
+    char *name = "CAP_LEASE capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_KILL);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_high(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_LINUX_IMMUTABLE
+// Set the immutable flag on a file
+static bool check_immutable(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 20;
+    char *name = "CAP_LINUX_IMMUTABLE capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_LINUX_IMMUTABLE);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_low(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_MAC_ADMIN
+// Change the smack linux security module configuration
+static bool check_mac_admin(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 21;
+    char *name = "CAP_MAC_ADMIN capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_MAC_ADMIN);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_high(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_MAC_OVERRIDE
+// Override mandatory access control for Smack LSM
+static bool check_mac_override(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 22;
+    char *name = "CAP_MAC_OVERRIDE capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_MAC_OVERRIDE);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_high(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_MKNOD
+// Create special files using mknod
+static bool check_mknod(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 23;
+    char *name = "CAP_MKNOD capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_MKNOD);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_low(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_NET_ADMIN
+// Perform shit tons of powerful networking operations
+static bool check_net_admin(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 24;
+    char *name = "CAP_NET_ADMIN capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_NET_ADMIN);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_high(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_NET_BIND_SERVICE
+// Bind to ports less than 1024
+static bool check_net_bind_service(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 25;
+    char *name = "CAP_NET_BIND_SERVICE capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_NET_BIND_SERVICE);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_high(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_NET_BROADCAST
+// Make a socket broadcasts and listen to multicast
+static bool check_net_broadcast(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 26;
+    char *name = "CAP_NET_BROADCAST capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_NET_BROADCAST);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_medium(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_NET_RAW
+// Use raw and packet sockets, bind to any address for transparent proxy
+static bool check_net_raw(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 27;
+    char *name = "CAP_NET_RAW capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_NET_RAW);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_high(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_SETGID
+// Manipulate GID list
+static bool check_set_gid(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 28;
+    char *name = "CAP_SETGID capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_SETGID);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_high(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_SETFCAP
+// set capablities on files
+static bool check_set_cap(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 29;
+    char *name = "CAP_SETGID capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_SETFCAP);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_high(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_SETPCAP
+// Same as CAP_SETFCAP but for processes
+static bool check_set_pcap(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 30;
+    char *name = "CAP_SETPCAP capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_SETPCAP);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_high(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_SETUID
+// Manipulatee process UID's
+static bool check_set_uid(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 31;
+    char *name = "CAP_SETTUID capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_SETUID);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_high(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_SYS_ADMIN
+// perform load of low level operations
+static bool check_sys_admin(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 32;
+    char *name = "CAP_SYS_ADMIN capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_SYS_ADMIN);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_high(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_SYS_BOOT
+// Perform reboots
+static bool check_reboot(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 33;
+    char *name = "CAP_SYS_BOOT capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_SYS_BOOT);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_low(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_SYS_CHROOT
+// Allows you to change root
+static bool check_sys_chroot(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 34;
+    char *name = "CAP_SYS_CHROOT capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_SYS_CHROOT);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_high(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_SYS_MODULE
+// Allows you to load and unload kernel modules
+static bool check_sys_module(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 35;
+    char *name = "CAP_SYS_MODULE capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_SYS_MODULE);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_high(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_SYS_NICE
+// Change kernels schelduling priorirties
+static bool check_sys_nice(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 36;
+    char *name = "CAP_SYS_NICE capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_SYS_NICE);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_low(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_SYS_PACCT
+// Change kernels schelduling priorirties
+static bool check_process_accounting(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 37;
+    char *name = "CAP_SYS_PACCT capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_SYS_PACCT);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_medium(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_SYS_PTRACE
+// Allows the use of ptrace syscall
+static bool check_ptrace(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 38;
+    char *name = "CAP_SYS_PTRACE capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_SYS_PTRACE);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_high(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_SYS_RESOURCE
+// TODO: figure out what this capability does does
+static bool check_sys_resource(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 39;
+    char *name = "CAP_SYS_RESOURCE capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_SYS_RESOURCE);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_low(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_SYS_TIME
+// Change system clock and the hardware clock
+static bool check_sys_time(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 40;
+    char *name = "CAP_SYS_TIME capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_SYS_TIME);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_low(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_SYS_TTY_CONFIG
+// Perform privilaged operations on TTY terminals
+static bool check_sys_tty(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 41;
+    char *name = "CAP_SYS_TIME capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_SYS_TTY_CONFIG);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_low(new_result, ar, cmdline);
+        return true;
+    }
+    return true;
+}
+
+// CAP_SYSLOG
+// Perform privilaged syslog opertaions and view kernel addresses exposed via /proc
+static bool check_syslog(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    int id = 41;
+    char *name = "CAP_SYSLOG capablities enabled on file";
+    int cap_value = check_cap(caps_for_file, CAP_SYSLOG);
+    if (cap_value)
+    {
+        Result *new_result = create_new_issue();
+        set_id_and_desc(id, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        set_other_info_to_cap_flag(cap_value, new_result);
+        add_new_result_high(new_result, ar, cmdline);
         return true;
     }
     return true;
