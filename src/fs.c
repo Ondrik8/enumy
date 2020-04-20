@@ -16,6 +16,7 @@
 #include <errno.h>
 #include <dirent.h>
 #include <limits.h>
+#include <ctype.h>
 
 int FILES_SCANNED = 0;
 
@@ -108,6 +109,9 @@ static void scan_file_for_issues(char *file_location, char *file_name, All_Resul
     free(new_file);
 }
 
+// Get the file extension the "." is not saved and an extension
+// abc.tar.gz would return .gz not .tar.gz
+// The extensions is saved in lowercase
 static void get_file_extension(char *buf, char *f_name)
 {
     int size = strlen(f_name);
@@ -126,9 +130,10 @@ static void get_file_extension(char *buf, char *f_name)
         {
             for (int y = x + 1; y <= size; y++)
             {
-                buf[i] = f_name[y];
+                buf[i] = (char)tolower(f_name[y]);
                 i++;
             }
+            buf[i] = '\0';
             return;
         }
     }

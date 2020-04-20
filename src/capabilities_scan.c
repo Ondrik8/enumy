@@ -12,6 +12,19 @@
 #include <stdlib.h>
 #include <errno.h>
 
+/*
+For the purpose of performing permission checks, traditional UNIX implementations distinguish two 
+categories of processes: privileged processes (whose effective user ID is 0, referred to as 
+superuser or root), and unprivileged processes (whose effective UID is nonzero).
+Privileged processes bypass all kernel permission checks, while unprivileged processes are subject to
+full permission checking based on the process's credentials
+(usually: effective UID, effective GID, and supplementary group list).
+
+Starting with kernel 2.2, Linux divides the privileges traditionally associated with superuser into
+distinct units, known as capabilities, which can be independently enabled and disabled. 
+Capabilities are a per-thread attribute.
+*/
+
 static bool check_audit_control(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_audit_read(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_audit_write(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
@@ -368,7 +381,7 @@ static bool check_lease(cap_t caps_for_file, File_Info *fi, All_Results *ar, Arg
 {
     int id = 19;
     char *name = "CAP_LEASE capablities enabled on file";
-    int cap_value = check_cap(caps_for_file, CAP_KILL);
+    int cap_value = check_cap(caps_for_file, CAP_LEASE);
     if (cap_value)
     {
         Result *new_result = create_new_issue();
@@ -567,7 +580,7 @@ static bool check_set_gid(cap_t caps_for_file, File_Info *fi, All_Results *ar, A
 static bool check_set_cap(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 29;
-    char *name = "CAP_SETGID capablities enabled on file";
+    char *name = "CAP_SETFCAP capablities enabled on file";
     int cap_value = check_cap(caps_for_file, CAP_SETFCAP);
     if (cap_value)
     {
@@ -826,7 +839,7 @@ static bool check_sys_tty(cap_t caps_for_file, File_Info *fi, All_Results *ar, A
 // Perform privilaged syslog opertaions and view kernel addresses exposed via /proc
 static bool check_syslog(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
-    int id = 41;
+    int id = 42;
     char *name = "CAP_SYSLOG capablities enabled on file";
     int cap_value = check_cap(caps_for_file, CAP_SYSLOG);
     if (cap_value)

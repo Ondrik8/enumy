@@ -210,7 +210,7 @@ bool add_new_result_high(Result *new_result, All_Results *all_results, Args *cmd
     all_results->high_end_node = new_result;
     all_results->gui_requires_refresh = HIGH;
 
-    if (!cmdline->enabled_ncurses)
+    if (cmdline->enabled_ncurses == false)
     {
         log_issue_to_screen(new_result, "High");
     }
@@ -229,7 +229,7 @@ bool add_new_result_medium(Result *new_result, All_Results *all_results, Args *c
     all_results->medium_end_node = new_result;
     all_results->gui_requires_refresh = MEDIUM;
 
-    if (!cmdline->enabled_ncurses)
+    if (cmdline->enabled_ncurses == false)
     {
         log_issue_to_screen(new_result, "Medium");
     }
@@ -248,7 +248,7 @@ bool add_new_result_low(Result *new_result, All_Results *all_results, Args *cmdl
     all_results->low_end_node = new_result;
     all_results->gui_requires_refresh = LOW;
 
-    if (!cmdline->enabled_ncurses)
+    if (cmdline->enabled_ncurses == false)
     {
         log_issue_to_screen(new_result, "Low");
     }
@@ -267,7 +267,7 @@ bool add_new_result_info(Result *new_result, All_Results *all_results, Args *cmd
     all_results->info_end_node = new_result;
     all_results->gui_requires_refresh = INFO;
 
-    if (!cmdline->enabled_ncurses)
+    if (cmdline->enabled_ncurses == false)
     {
         log_issue_to_screen(new_result, "Info");
     }

@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <signal.h>
+#include <string.h>
 
 #include "main.h"
 #include "gui.h"
@@ -117,11 +118,11 @@ int main(int argc, char *argv[])
 {
     int opt;
 
-    struct Args args = {
-        .save_location = {'\0'},
-        .enabled_all_scans = true,
-        .enabled_quick_scans = false,
-        .enabled_ncurses = false};
+    struct Args *args = (struct Args *)malloc(sizeof(struct Args));
+    args->save_location[0] = '\0';
+    args->enabled_all_scans = true;
+    args->enabled_quick_scans = false;
+    args->enabled_ncurses = false;
 
     struct Ncurses_Layout nlayout = {
         .logo = NULL,
@@ -147,14 +148,14 @@ int main(int argc, char *argv[])
             break;
 
         case 'q':
-            args.enabled_quick_scans = true;
-            args.enabled_all_scans = false;
+            args->enabled_quick_scans = true;
+            args->enabled_all_scans = false;
 
         case 'o':
             break;
 
         case 'n':
-            args.enabled_ncurses = true;
+            args->enabled_ncurses = true;
             break;
 
         default:
@@ -164,21 +165,24 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (args.enabled_ncurses)
+    if (args->enabled_ncurses == true)
     {
         char *_;
         pthread_t user_input_thread;
         init_ncurses_layout(&nlayout, all_results);
         pthread_create(&user_input_thread, NULL, &handle_user_input, &user_input_thread_args);
+        args->enabled_ncurses = true;
         start_scan(&nlayout, all_results, args);
         pthread_join(user_input_thread, (void **)&_);
         endwin();
         return 0;
     }
-    puts("");
-    banner();
-    puts("\nStarting scan");
-    start_scan(&nlayout, all_results, args);
-
+    else
+    {
+        puts("");
+        banner();
+        puts("\nStarting scan");
+        start_scan(&nlayout, all_results, args);
+    }
     return 0;
 }
