@@ -16,10 +16,10 @@ CFLAGS := -W
 all: $(EXE)
 
 $(EXE): $(OBJ)
-	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@ -g -lncursesw -lpthread $(STATIC) $(ARCH)
+	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@ -lncursesw -lpthread $(STATIC) $(ARCH) -s
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@ -g -lncursesw -lpthread $(STATIC) $(ARCH)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@ -lncursesw -lpthread $(STATIC) $(ARCH) -s
 
 $(OBJ_DIR):
 	mkdir $@

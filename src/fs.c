@@ -17,8 +17,15 @@
 #include <dirent.h>
 #include <limits.h>
 
+int FILES_SCANNED = 0;
+
 static void get_file_extension(char *buf, char *f_name);
 static void scan_file_for_issues(char *file_location, char *file_name, All_Results *all_results, Args *cmdline);
+
+int get_number_of_files_scanned()
+{
+    return FILES_SCANNED;
+}
 
 void walk_file_system(char *entry_location, All_Results *all_results, Args *cmdline)
 {
@@ -80,7 +87,7 @@ static void scan_file_for_issues(char *file_location, char *file_name, All_Resul
         return;
     }
 
-    // Ignore symlinks
+    // Ignore symlinks as following them to special files will break scans
     if (S_ISLNK(stat_buf->st_mode))
     {
         free(stat_buf);
@@ -88,6 +95,7 @@ static void scan_file_for_issues(char *file_location, char *file_name, All_Resul
         return;
     }
 
+    FILES_SCANNED++;
     findings += suid_bit_scan(new_file, all_results, cmdline);
     findings += guid_bit_scan(new_file, all_results, cmdline);
     findings += capabilities_scan(new_file, all_results, cmdline);

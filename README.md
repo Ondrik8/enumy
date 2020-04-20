@@ -25,5 +25,11 @@ To remove the glibc dependency and statically link all libaries/compile with mus
 ```shell
 ./build.sh 64bit
 ./build.sh 32bit
+./build.sh all
 cd output
 ```
+
+## Scans That've Been Implemented
+
+- SUID/GUID scans
+- File capabilities

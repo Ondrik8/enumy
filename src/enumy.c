@@ -61,7 +61,7 @@ void help()
     puts("");
     puts(" -o <loc>     Save results to location");
     puts(" -q           Run quick scans");
-    puts(" -n           No ncurses");
+    puts(" -n           Enabled ncurses");
     puts(" -h           Show help");
 }
 
@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
         .save_location = {'\0'},
         .enabled_all_scans = true,
         .enabled_quick_scans = false,
-        .enabled_ncurses = true};
+        .enabled_ncurses = false};
 
     struct Ncurses_Layout nlayout = {
         .logo = NULL,
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
             break;
 
         case 'n':
-            args.enabled_ncurses = false;
+            args.enabled_ncurses = true;
             break;
 
         default:

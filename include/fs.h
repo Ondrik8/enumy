@@ -29,3 +29,5 @@ bool has_executable(File_Info *f);
 bool has_suid(File_Info *f);
 bool has_guid(File_Info *f);
 bool has_extension(File_Info *f, char *extension);
+
+int get_number_of_files_scanned();

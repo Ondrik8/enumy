@@ -54,4 +54,5 @@ void start_scan(Ncurses_Layout *layout, All_Results *all_results, Args *args)
     // Walk the file system in the background while we perform other scans
     pthread_create(&walk_thread, NULL, &create_walk_thread, &walk_args);
     pthread_join(walk_thread, (void **)&_);
+    printf("Total files scanned -> %i\n", get_number_of_files_scanned());
 }

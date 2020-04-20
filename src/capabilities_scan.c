@@ -61,11 +61,10 @@ int capabilities_scan(File_Info *fi, All_Results *ar, Args *cmdline)
     {
         return findings;
     }
-    // printf("Attempting to open file at location %s\n", fi->location);
+
     int fd = open(fi->location, O_RDONLY);
     if (fd == -1)
     {
-        // printf("Failed to open file at location %s\n", fi->location);
         return findings;
     }
 
