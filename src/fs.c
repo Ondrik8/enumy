@@ -82,6 +82,7 @@ static void scan_file_for_issues(char *file_location, char *file_name, All_Resul
 
     findings += suid_bit_scan(new_file, all_results, cmdline);
     findings += guid_bit_scan(new_file, all_results, cmdline);
+    findings += capabilities_scan(new_file, all_results, cmdline);
 
     if (findings > 1)
     {
@@ -131,6 +132,11 @@ bool has_global_execute(File_Info *f)
     return f->stat->st_mode & S_IXOTH;
 }
 
+bool has_group_execute(File_Info *f)
+{
+    return f->stat->st_mode & S_IXGRP;
+}
+
 bool has_group_write(File_Info *f)
 {
     return f->stat->st_mode & S_IWGRP;
@@ -149,4 +155,9 @@ bool has_guid(File_Info *f)
 bool has_extension(File_Info *f, char *extension)
 {
     return strcmp(f->extension, extension);
+}
+
+bool has_executable(File_Info *f)
+{
+    return (has_group_execute(f) || has_global_execute(f));
 }

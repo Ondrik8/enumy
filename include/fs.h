@@ -24,6 +24,8 @@ bool has_global_write(File_Info *f);
 bool has_global_read(File_Info *f);
 bool has_global_execute(File_Info *f);
 bool has_group_write(File_Info *f);
+bool has_group_execute(File_Info *f);
+bool has_executable(File_Info *f);
 bool has_suid(File_Info *f);
 bool has_guid(File_Info *f);
 bool has_extension(File_Info *f, char *extension);

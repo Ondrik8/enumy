@@ -21,6 +21,7 @@ typedef struct Result
     char issue_name[MAXSIZE];
     char description[MAXSIZE];
     char location[MAXSIZE];
+    char other_info[MAXSIZE];
     struct Result *previous, *next;
 } Result;
 
@@ -48,7 +49,8 @@ void set_id(int issue_id, Result *result_node);
 void set_id_and_desc(int issue_id, Result *result_node);
 void set_issue_name(char *issue_name, Result *result_node);
 void set_issue_description(char *issue_description, Result *result_node);
-void set_issue_location(char *issue_location, Result *result_nodee);
+void set_issue_location(char *issue_location, Result *result_node);
+void set_other_info(char *issue_location, Result *result_nodee);
 
 bool add_new_result_high(Result *new_result, All_Results *result, Args *cmdline);
 bool add_new_result_medium(Result *new_result, All_Results *result, Args *cmdline);

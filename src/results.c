@@ -53,7 +53,6 @@ bool add_new_result_low(Result *new_result, All_Results *result, Args *cmdline);
 bool add_new_result_info(Result *new_result, All_Results *result, Args *cmdline);
 
 static void log_issue_to_screen(Result *new_result, char *severity);
-static void print_result_set(Result *result_cat);
 static bool is_complete(Result *new_result);
 static void add_new_issue(Result *new_result, All_Results *all_results, int category);
 
@@ -157,6 +156,12 @@ void set_issue_location(char *issue_location, Result *result_node)
     strncpy(result_node->location, issue_location, sizeof(result_node->location));
 }
 
+// Set the optional other info
+void set_other_info(char *other_info, Result *result_nodee)
+{
+    strncpy(result_nodee->other_info, other_info, sizeof(result_nodee->other_info));
+}
+
 // Prints all the results in non ncurse mode
 void print_all_results(All_Results *all_results)
 {
@@ -170,7 +175,6 @@ void print_all_results(All_Results *all_results)
 void print_high_results(All_Results *all_results)
 {
     puts("HIGH:");
-    print_result_set(all_results->high);
     puts("");
 }
 
@@ -178,7 +182,6 @@ void print_high_results(All_Results *all_results)
 void print_medium_results(All_Results *all_results)
 {
     puts("MEDIUM:");
-    print_result_set(all_results->medium);
     puts("");
 }
 
@@ -186,7 +189,6 @@ void print_medium_results(All_Results *all_results)
 void print_low_results(All_Results *all_results)
 {
     puts("LOW:");
-    print_result_set(all_results->low);
     puts("");
 }
 
@@ -194,7 +196,6 @@ void print_low_results(All_Results *all_results)
 void print_info_results(All_Results *all_results)
 {
     puts("INFO:");
-    print_result_set(all_results->info);
     puts("");
 }
 
@@ -326,23 +327,6 @@ static void log_issue_to_screen(Result *new_result, char *category)
            color_code, category, COLOR_RESET,
            new_result->issue_name);
     printf("%s", ls_result);
-}
-
-static void print_result_set(Result *result_cat)
-{
-    struct Result *res_ptr = result_cat;
-
-    printf("%-10s%-30s%-60s%60s\n", "Issue_ID", "Name", "Description", "Location");
-    while (res_ptr != NULL)
-    {
-        if (res_ptr->issue_id == FIRST_ID)
-        {
-            printf("%-10s%-30s%-60s%60s\n", "None", "None", "None", "None");
-            break;
-        }
-        printf("%-10i%-30s%-60s%60s\n", res_ptr->issue_id, res_ptr->issue_name, res_ptr->description, res_ptr->location);
-        res_ptr = res_ptr->next;
-    }
 }
 
 // Finds the correct linked list, if the first element in the link list is the dummy issue
