@@ -28,7 +28,7 @@ typedef Elf64_Sym Elf_Sym;
 const int ARCH = X64;
 #endif
 
-#ifdef __1386
+#ifdef __i386
 typedef Elf32_Ehdr Elf_Ehdr;
 typedef Elf32_Shdr Elf_Shdr;
 typedef Elf32_Sym Elf_Sym;
