@@ -19,7 +19,7 @@
 #include <math.h>
 #include <string.h>
 
-#define ENTROPY_SIZE 1024
+#define ENTROPY_SIZE 5000
 
 int intresting_files_scan(File_Info *fi, All_Results *ar, Args *cmdline);
 static int extension_checker(File_Info *fi, All_Results *ar, Args *cmdline);
@@ -45,30 +45,17 @@ static int extension_checker(File_Info *fi, All_Results *ar, Args *cmdline)
     switch (fi->extension[0])
     {
     case 'a':
-        // .aes// is plain text or base64 encoded.
-        // Quick testing shows keys entropy is less than 0.8
-        // Normal text is around 0.6
-        // Encrypted data was between 0.9 and 1.0
+        if (strcmp(fi->extension, "aes") == 0)
+            findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
         break;
     case 'c':
-        // .cer
-        // .chk
-        // .crack
-        // .crk
-        // .conf
-        // .config
-        // .crt
         break;
     case 'd':
-        // .data
-        // .dat
-        // .debug
-        // .der
-        // .des
-        // .dump
         // .coredump
         // .core
         if (strcmp(fi->extension, "des") == 0)
+            findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
+        if (strcmp(fi->extension, "der") == 0)
             findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
         break;
     case 'g':
@@ -102,13 +89,6 @@ static int extension_checker(File_Info *fi, All_Results *ar, Args *cmdline)
         // .afx
         break;
     case 'p':
-        // .ple
-        // .pwl
-        // .pot
-        // .password
-        // .private
-        // .pk
-        // .pgp
         if (strcmp(fi->extension, "password") == 0)
             findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
         if (strcmp(fi->extension, "private") == 0)
@@ -119,9 +99,6 @@ static int extension_checker(File_Info *fi, All_Results *ar, Args *cmdline)
             findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
         break;
     case 'r':
-        // .rzk
-        // .rzx
-        // .rsa
         if (strcmp(fi->extension, "rsa") == 0)
             findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
         break;
@@ -158,9 +135,25 @@ static bool check_for_encryption_key(File_Info *fi, All_Results *ar, Args *cmdli
     float entropy;
     int id;
 
+    if (strstr(fi->location, "/test/") || strstr(fi->location, "/tests/") || strstr(fi->location, "/testing/"))
+    {
+        return false;
+    }
+
+    if (strstr(fi->location, "integration") && strstr(fi->location, "test"))
+    {
+        return false;
+    }
+    if (fi->stat->st_size > 100000 || fi->stat->st_size < 100)
+    {
+        // Data probably too big to be a key
+        return false;
+    }
+
     if (access(fi->location, R_OK) != 0)
     {
-        // Log issuse as info
+    // Log issuse as info
+    NONREADABLE:
         id = 43;
         char *name = "None readable potentianal encryption key";
         Result *new_result = create_new_issue();
@@ -177,10 +170,10 @@ static bool check_for_encryption_key(File_Info *fi, All_Results *ar, Args *cmdli
         // Not sure if we care about reporting encrypted data
         return false;
     }
-    if (fi->stat->st_size > 100000)
+
+    if (getuid() == 0 && fi->stat->st_uid == 0)
     {
-        // Data probably too big to be a key
-        return false;
+        goto NONREADABLE;
     }
 
     id = 45;

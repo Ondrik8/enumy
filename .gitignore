@@ -10,3 +10,4 @@ obj/*
 compile_commands.json
 enumy
 *.log
+vgcore*
