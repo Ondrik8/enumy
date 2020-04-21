@@ -175,6 +175,7 @@ int main(int argc, char *argv[])
         start_scan(&nlayout, all_results, args);
         pthread_join(user_input_thread, (void **)&_);
         endwin();
+        free(args);
         return 0;
     }
     else
@@ -184,5 +185,6 @@ int main(int argc, char *argv[])
         puts("\nStarting scan");
         start_scan(&nlayout, all_results, args);
     }
+    free(args);
     return 0;
 }

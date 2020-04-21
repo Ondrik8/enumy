@@ -85,6 +85,8 @@ static void scan_file_for_issues(char *file_location, char *file_name, All_Resul
     }
     else
     {
+        free(stat_buf);
+        free(new_file);
         return;
     }
 
@@ -100,10 +102,11 @@ static void scan_file_for_issues(char *file_location, char *file_name, All_Resul
     findings += suid_bit_scan(new_file, all_results, cmdline);
     findings += guid_bit_scan(new_file, all_results, cmdline);
     findings += capabilities_scan(new_file, all_results, cmdline);
+    findings += intresting_files_scan(new_file, all_results, cmdline);
 
     if (findings > 1)
     {
-        printf("\n");
+        // printf("\n");
     }
     free(stat_buf);
     free(new_file);

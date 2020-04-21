@@ -580,7 +580,7 @@ static bool check_set_gid(cap_t caps_for_file, File_Info *fi, All_Results *ar, A
 static bool check_set_cap(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 29;
-    char *name = "CAP_SETFCAP capablities enabled on file";
+    char *name = "CAP_SETGID capablities enabled on file";
     int cap_value = check_cap(caps_for_file, CAP_SETFCAP);
     if (cap_value)
     {
@@ -839,7 +839,7 @@ static bool check_sys_tty(cap_t caps_for_file, File_Info *fi, All_Results *ar, A
 // Perform privilaged syslog opertaions and view kernel addresses exposed via /proc
 static bool check_syslog(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
-    int id = 42;
+    int id = 41;
     char *name = "CAP_SYSLOG capablities enabled on file";
     int cap_value = check_cap(caps_for_file, CAP_SYSLOG);
     if (cap_value)

@@ -54,4 +54,5 @@ void start_scan(Ncurses_Layout *layout, All_Results *all_results, Args *args)
     pthread_create(&walk_thread, NULL, &create_walk_thread, &walk_args);
     pthread_join(walk_thread, (void **)&_);
     printf("Total files scanned -> %i\n", get_number_of_files_scanned());
+    free_total_results(all_results);
 }

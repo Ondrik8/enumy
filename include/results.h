@@ -43,6 +43,7 @@ typedef struct All_Results
 } All_Results;
 
 All_Results *initilize_total_results();
+void free_total_results(All_Results *ar);
 
 Result *create_new_issue();
 void set_id(int issue_id, Result *result_node);

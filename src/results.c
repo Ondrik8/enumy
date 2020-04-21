@@ -55,6 +55,7 @@ bool add_new_result_info(Result *new_result, All_Results *result, Args *cmdline)
 static void log_issue_to_screen(Result *new_result, char *severity);
 static bool is_complete(Result *new_result);
 static void add_new_issue(Result *new_result, All_Results *all_results, int category);
+static void free_linked_list(Result *head);
 
 static int count_linked_list_length(Result *first_result);
 
@@ -64,17 +65,30 @@ All_Results *initilize_total_results()
     struct All_Results *all_results = (struct All_Results *)malloc(sizeof(struct All_Results));
 
     all_results->high = (struct Result *)malloc(sizeof(struct Result));
-    all_results->medium = (struct Result *)malloc(sizeof(struct Result));
-    all_results->low = (struct Result *)malloc(sizeof(struct Result));
-    all_results->info = (struct Result *)malloc(sizeof(struct Result));
-
-    if (
-        (all_results->high == NULL) ||
-        (all_results->medium == NULL) ||
-        (all_results->low == NULL) ||
-        (all_results->info == NULL))
+    if (all_results->high == NULL)
     {
         out_of_memory_err();
+    }
+
+    all_results->medium = (struct Result *)malloc(sizeof(struct Result));
+    if (all_results->medium == NULL)
+    {
+        free(all_results->high);
+        out_of_memory_err();
+    }
+
+    all_results->low = (struct Result *)malloc(sizeof(struct Result));
+    if (all_results->low == NULL)
+    {
+        free(all_results->high);
+        free(all_results->medium);
+    }
+    all_results->info = (struct Result *)malloc(sizeof(struct Result));
+    if (all_results->info == NULL)
+    {
+        free(all_results->high);
+        free(all_results->medium);
+        free(all_results->low);
     }
 
     all_results->high_end_node = all_results->high;
@@ -85,11 +99,35 @@ All_Results *initilize_total_results()
     all_results->gui_requires_refresh = NO_REFRESH;
 
     all_results->high->issue_id = FIRST_ID;
+    all_results->high->next = NULL;
+    all_results->high->previous = NULL;
+
     all_results->medium->issue_id = FIRST_ID;
+    all_results->medium->next = NULL;
+    all_results->medium->previous = NULL;
+
     all_results->low->issue_id = FIRST_ID;
+    all_results->low->next = NULL;
+    all_results->low->previous = NULL;
+
     all_results->info->issue_id = FIRST_ID;
+    all_results->high->next = NULL;
+    all_results->high->previous = NULL;
 
     return all_results;
+}
+
+void free_total_results(All_Results *ar)
+{
+    free_linked_list(ar->high);
+    free_linked_list(ar->medium);
+    free_linked_list(ar->low);
+    free_linked_list(ar->info);
+
+    if (ar != NULL)
+    {
+        free(ar);
+    }
 }
 
 // Creates a base issue with default values
@@ -327,13 +365,14 @@ static void log_issue_to_screen(Result *new_result, char *category)
            color_code, category, COLOR_RESET,
            new_result->issue_name);
     printf("%s", ls_result);
+    pclose(fp);
 }
 
 // Finds the correct linked list, if the first element in the link list is the dummy issue
 // then swap it with the new result. Updates the saved end nodes.
 static void add_new_issue(Result *new_result, All_Results *all_results, int category)
 {
-    struct Result *old_head;
+    struct Result *old_head, *old_ptr;
     switch (category)
     {
     case HIGH:
@@ -341,11 +380,17 @@ static void add_new_issue(Result *new_result, All_Results *all_results, int cate
         all_results->high_end_node = new_result;
         if (all_results->high->issue_id == FIRST_ID)
         {
+            old_ptr = all_results->high;
             all_results->high = new_result;
+            all_results->high_end_node = new_result;
+            free(old_ptr);
         }
 
-        all_results->high_end_node->previous = old_head;
-        old_head->next = new_result;
+        else
+        {
+            all_results->high_end_node->previous = old_head;
+            old_head->next = new_result;
+        }
         break;
 
     case MEDIUM:
@@ -354,11 +399,16 @@ static void add_new_issue(Result *new_result, All_Results *all_results, int cate
 
         if (all_results->medium->issue_id == FIRST_ID)
         {
+            old_ptr = all_results->medium;
             all_results->medium = new_result;
+            all_results->medium_end_node = new_result;
+            free(old_ptr);
         }
-
-        all_results->medium_end_node->previous = old_head;
-        old_head->next = new_result;
+        else
+        {
+            all_results->medium_end_node->previous = old_head;
+            old_head->next = new_result;
+        }
         break;
 
     case LOW:
@@ -367,11 +417,16 @@ static void add_new_issue(Result *new_result, All_Results *all_results, int cate
 
         if (all_results->low->issue_id == FIRST_ID)
         {
+            old_ptr = all_results->low;
             all_results->low = new_result;
+            all_results->low_end_node = new_result;
+            free(old_ptr);
         }
-
-        all_results->low_end_node->previous = old_head;
-        old_head->next = new_result;
+        else
+        {
+            all_results->low_end_node->previous = old_head;
+            old_head->next = new_result;
+        }
         break;
 
     case INFO:
@@ -379,10 +434,16 @@ static void add_new_issue(Result *new_result, All_Results *all_results, int cate
         all_results->info_end_node = new_result;
         if (all_results->info->issue_id == FIRST_ID)
         {
+            old_ptr = all_results->info;
             all_results->info = new_result;
+            all_results->info_end_node = new_result;
+            free(old_ptr);
         }
-        all_results->info_end_node->previous = old_head;
-        old_head->next = new_result;
+        else
+        {
+            all_results->info_end_node->previous = old_head;
+            old_head->next = new_result;
+        }
         break;
 
     default:
@@ -435,4 +496,16 @@ static int count_linked_list_length(Result *first_result)
         next_item = next_item->next;
     }
     return tot;
+}
+
+static void free_linked_list(Result *head)
+{
+    struct Result *tmp = head;
+
+    while (head != NULL)
+    {
+        tmp = head;
+        head = head->next;
+        free(tmp);
+    }
 }
