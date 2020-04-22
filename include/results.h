@@ -10,8 +10,6 @@
 #define INFO 0
 #define NO_REFRESH -1
 
-#define MAXSIZE 512
-
 #define FIRST_ID -1
 #define INCOMPLETE_ID -1
 

@@ -61,6 +61,7 @@ void help()
     puts("security vulnerabilities and hostspots");
     puts("");
     puts(" -o <loc>     Save results to location");
+    puts(" -i <loc>     Ignore files in this directory (usefull for network shares)");
     puts(" -q           Run quick scans");
     puts(" -n           Enabled ncurses");
     puts(" -h           Show help");
@@ -138,7 +139,7 @@ int main(int argc, char *argv[])
 
     signal(SIGINT, sigint_handler);
 
-    while ((opt = getopt(argc, argv, "qhno:")) != -1)
+    while ((opt = getopt(argc, argv, "qhno:i:")) != -1)
     {
         switch (opt)
         {
@@ -150,10 +151,15 @@ int main(int argc, char *argv[])
         case 'q':
             args->enabled_quick_scans = true;
             args->enabled_all_scans = false;
-
-        case 'o':
             break;
 
+        case 'o':
+            strncpy(args->save_location, optarg, MAXSIZE);
+            break;
+
+        case 'i':
+            strncpy(args->ignore_scan_dir, optarg, MAXSIZE);
+            break;
         case 'n':
             args->enabled_ncurses = true;
             break;

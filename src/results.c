@@ -291,11 +291,11 @@ static bool is_complete(Result *new_result)
 of the struct before adding to linked list */
 static void log_issue_to_screen(Result *new_result, char *category)
 {
-    char ls_cmd[1024];
-    char ls_result[1024];
+    char ls_cmd[MAXSIZE * 2];
+    char ls_result[MAXSIZE];
     char *color_code;
 
-    snprintf(ls_cmd, 1023, "ls -ltra \"%s\" --color=always", new_result->location);
+    snprintf(ls_cmd, MAXSIZE * 2, "ls -ltra \"%s\" --color=always", new_result->location);
     FILE *fp = popen(ls_cmd, "r");
     while (fgets(ls_result, sizeof(ls_result), fp) != NULL)
     {

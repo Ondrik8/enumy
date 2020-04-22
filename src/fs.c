@@ -56,7 +56,15 @@ void walk_file_system(char *entry_location, All_Results *all_results, Args *cmdl
             {
                 strcpy(file_location, entry_location);
                 strcat(file_location, entry->d_name);
+                if (strcmp(cmdline->ignore_scan_dir, file_location) == 0)
+                {
+                    continue;
+                }
                 strcat(file_location, "/");
+                if (strcmp(cmdline->ignore_scan_dir, file_location) == 0)
+                {
+                    continue;
+                }
                 walk_file_system(file_location, all_results, cmdline);
             }
         }
