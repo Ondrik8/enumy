@@ -22,7 +22,7 @@ make
 
 To remove the glibc dependency and statically link all libaries/compile with musl do the following. _Note to do this you will have to have docker installed to create the apline build environment._
 
-```shell
+```shells
 ./build.sh 64bit
 ./build.sh 32bit
 ./build.sh all
@@ -33,4 +33,6 @@ cd output
 
 - SUID/GUID scans
 - File capabilities
-- Interesting files scan"
+- Interesting files scan
+- Coredump scan
+- Breakout binary scan
