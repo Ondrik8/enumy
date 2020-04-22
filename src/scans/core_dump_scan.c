@@ -109,7 +109,6 @@ int core_dump_scan(File_Info *fi, All_Results *ar, Args *cmdline)
 static bool parse_elf_headers(File_Info *fi)
 {
     int fd;
-    bool ret;
     ElfFile *file = NULL;
 
     if (fi->stat->st_size == 0)
@@ -171,7 +170,6 @@ static bool test_magic_number(File_Info *fi)
     unsigned char big_endian[4] = {0x7f, 0x45, 0x4c, 0x46};
 
     FILE *fp;
-    int i;
     bool little_found, big_found;
 
     little_found = big_found = true;

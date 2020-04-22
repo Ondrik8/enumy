@@ -45,6 +45,11 @@ void start_scan(Ncurses_Layout *layout, All_Results *all_results, Args *args)
         .all_results = all_results,
         .cmdline = args};
 
+    if (layout->current_category == 0x2342)
+    {
+        puts("I'm just here to make the compiler warning go away");
+    }
+
     if (!args->enabled_ncurses)
     {
         puts("Walking file system");

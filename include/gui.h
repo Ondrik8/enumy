@@ -4,10 +4,10 @@
 
 typedef struct Ncurses_Layout
 {
-    WINDOW *logo;
-    WINDOW *bars;
-    WINDOW *main;
-    WINDOW *id;
+    WINDOW *logo; // logo
+    WINDOW *bars; // ascii bars
+    WINDOW *main; // Main table
+    WINDOW *id;   // Displays current UID
     int cursor_position;
     int current_category;
 } Ncurses_Layout;

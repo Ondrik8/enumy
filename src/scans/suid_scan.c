@@ -102,6 +102,7 @@ int suid_bit_scan(File_Info *fi, All_Results *ar, Args *cmdline)
     {
         findings++;
     }
+    findings += break_out_binary_scan(fi, ar, cmdline);
     return findings;
 }
 

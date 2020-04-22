@@ -46,6 +46,7 @@ static bool check_net_admin(cap_t caps_for_file, File_Info *fi, All_Results *ar,
 static bool check_net_bind_service(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_net_broadcast(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_net_raw(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+static bool check_sys_nice(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_set_gid(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_set_cap(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_set_pcap(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
@@ -62,7 +63,6 @@ static bool check_sys_tty(cap_t caps_for_file, File_Info *fi, All_Results *ar, A
 static bool check_syslog(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 
 static int check_cap(cap_t caps_for_file, cap_value_t search);
-static void print_cap(char *fname, cap_t cap);
 static void set_other_info_to_cap_flag(cap_flag_t flag, Result *new_result);
 
 int capabilities_scan(File_Info *fi, All_Results *ar, Args *cmdline)
@@ -88,41 +88,42 @@ int capabilities_scan(File_Info *fi, All_Results *ar, Args *cmdline)
         return findings;
     }
 
-    findings = (check_audit_control(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_audit_read(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_audit_write(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_block_suspend(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_chown(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_dac_bypass(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_dac_read_search(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_fowner(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_clear_set_id(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_ipc_lock(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_ipc_owner(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_kill(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_lease(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_immutable(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_mac_admin(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_mac_override(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_mknod(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_net_admin(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_net_bind_service(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_net_broadcast(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_net_raw(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_set_gid(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_set_cap(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_set_pcap(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_set_uid(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_sys_admin(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_reboot(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_sys_chroot(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_sys_module(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_process_accounting(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_ptrace(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_sys_resource(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_sys_time(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_sys_tty(cap, fi, ar, cmdline) == true) ? findings++ : findings;
-    findings = (check_syslog(cap, fi, ar, cmdline) == true) ? findings++ : findings;
+    findings += (check_audit_control(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_audit_read(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_audit_write(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_block_suspend(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_chown(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_dac_bypass(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_dac_read_search(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_fowner(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_clear_set_id(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_ipc_lock(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_ipc_owner(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_kill(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_lease(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_immutable(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_mac_admin(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_mac_override(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_mknod(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_net_admin(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_net_bind_service(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_net_broadcast(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_net_raw(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_sys_nice(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_set_gid(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_set_cap(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_set_pcap(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_set_uid(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_sys_admin(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_reboot(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_sys_chroot(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_sys_module(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_process_accounting(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_ptrace(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_sys_resource(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_sys_time(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_sys_tty(cap, fi, ar, cmdline) == true) ? 1 : 0;
+    findings += (check_syslog(cap, fi, ar, cmdline) == true) ? 1 : 0;
 
     cap_free(cap);
     close(fd);
@@ -861,7 +862,6 @@ static bool check_syslog(cap_t caps_for_file, File_Info *fi, All_Results *ar, Ar
 // Permited ->      The inheritable set contains the capabilities that can be inherited by children to the process
 static int check_cap(cap_t caps_for_file, cap_value_t search)
 {
-    cap_value_t cap;                      // Capability we're looking for
     cap_flag_t flag;                      // values for this type are CAP_EFFECTIVE, CAP_INHERITABLE or CAP_PERMITTED
     cap_flag_value_t value_p = CAP_CLEAR; // valid values for this type are CAP_CLEAR (0) or CAP_SET (1)
 

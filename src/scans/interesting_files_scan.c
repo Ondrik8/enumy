@@ -28,9 +28,10 @@ int intresting_files_scan(File_Info *fi, All_Results *ar, Args *cmdline);
 static int extension_checker(File_Info *fi, All_Results *ar, Args *cmdline);
 static int file_name_checker(File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_for_encryption_key(File_Info *fi, All_Results *ar, Args *cmdline);
+static int check_for_writable_shared_object(File_Info *fi, All_Results *ar, Args *cmdline);
 static double caclulate_file_entropy(char *file_location);
 static int search_conf_for_pass(File_Info *fi, All_Results *ar, Args *cmdline);
-static int search_line(char *line_start, char *line_end);
+static int search_line(unsigned char *line_start, unsigned char *line_end);
 
 // Kicks of other scans
 int intresting_files_scan(File_Info *fi, All_Results *ar, Args *cmdline)
@@ -40,6 +41,7 @@ int intresting_files_scan(File_Info *fi, All_Results *ar, Args *cmdline)
     findings += extension_checker(fi, ar, cmdline);
     findings += file_name_checker(fi, ar, cmdline);
     // findings += parent_dir_checker(fi, ar, cmdline);
+    return findings;
 }
 
 // Kicks off scans that require the file extensions to clasify the file
@@ -51,15 +53,17 @@ static int extension_checker(File_Info *fi, All_Results *ar, Args *cmdline)
     {
     case 'a':
         if (strcmp(fi->extension, "aes") == 0)
-            findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
+            findings += (check_for_encryption_key(fi, ar, cmdline) == true) ? 1 : 0;
         break;
     case 'c':
+        if (strcmp(fi->extension, "config") == 0)
+            findings += search_conf_for_pass(fi, ar, cmdline);
         if (strcmp(fi->extension, "conf") == 0)
             findings += search_conf_for_pass(fi, ar, cmdline);
         break;
     case 'd':
         if (strcmp(fi->extension, "des") == 0)
-            findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
+            findings += (check_for_encryption_key(fi, ar, cmdline) == true) ? 1 : 0;
         break;
     case 'g':
         // .gxk
@@ -73,7 +77,7 @@ static int extension_checker(File_Info *fi, All_Results *ar, Args *cmdline)
     case 'k':
         // .key
         if (strcmp(fi->extension, "key") == 0)
-            findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
+            findings += (check_for_encryption_key(fi, ar, cmdline) == true) ? 1 : 0;
         break;
     case 'm':
         // .mbr
@@ -88,17 +92,17 @@ static int extension_checker(File_Info *fi, All_Results *ar, Args *cmdline)
         break;
     case 'p':
         if (strcmp(fi->extension, "password") == 0)
-            findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
+            findings += (check_for_encryption_key(fi, ar, cmdline) == true) ? 1 : 0;
         if (strcmp(fi->extension, "passwords") == 0)
-            findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
+            findings += (check_for_encryption_key(fi, ar, cmdline) == true) ? 1 : 0;
         if (strcmp(fi->extension, "private") == 0)
-            findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
+            findings += (check_for_encryption_key(fi, ar, cmdline) == true) ? 1 : 0;
         if (strcmp(fi->extension, "pk") == 0)
-            findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
+            findings += (check_for_encryption_key(fi, ar, cmdline) == true) ? 1 : 0;
         break;
     case 'r':
         if (strcmp(fi->extension, "rsa") == 0)
-            findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
+            findings += (check_for_encryption_key(fi, ar, cmdline) == true) ? 1 : 0;
         break;
     case 's':
         // .secret
@@ -107,13 +111,16 @@ static int extension_checker(File_Info *fi, All_Results *ar, Args *cmdline)
         // .sql
         // .sqlite
         if (strcmp(fi->extension, "secret") == 0)
-            findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
+            findings += (check_for_encryption_key(fi, ar, cmdline) == true) ? 1 : 0;
+        if (strcmp(fi->extension, "so") == 0)
+            findings += check_for_writable_shared_object(fi, ar, cmdline);
         break;
     case 'v':
         // .vpn
         // .openvpn
         break;
     }
+    return findings;
 }
 
 // Kick of scans that require the file name to classify the file
@@ -135,11 +142,6 @@ static int file_name_checker(File_Info *fi, All_Results *ar, Args *cmdline)
         }
     }
     return findings;
-}
-
-// Kick of the scans that require the  parent directory to identify the file
-static int parent_dir_checker(File_Info *fi, All_Results *ar, Args *cmdline)
-{
 }
 
 // If the file has the string private key etc inside of it or the file has low entropy
@@ -210,8 +212,7 @@ static double caclulate_file_entropy(char *file_location)
     unsigned int len, *hist, histlen, i;
     FILE *f;
     int wherechar[256];
-    double H;
-    H = 0;
+    double entropy = 0;
 
     f = fopen(file_location, "r");
     for (len = 0; !feof(f) && len < ENTROPY_SIZE; len++)
@@ -220,7 +221,7 @@ static double caclulate_file_entropy(char *file_location)
     fclose(f);
     str[--len] = '\0';
 
-    hist = (int *)calloc(len, sizeof(int));
+    hist = (unsigned int *)calloc(len, sizeof(int));
     if (hist == NULL)
     {
         return -1;
@@ -245,14 +246,14 @@ static double caclulate_file_entropy(char *file_location)
     // Calculate entropy
     for (i = 0; i < histlen; i++)
     {
-        H -= (double)hist[i] / len * log2((double)hist[i] / len);
+        entropy -= (double)hist[i] / len * log2((double)hist[i] / len);
     }
 
     if (hist != NULL)
     {
         free(hist);
     }
-    return H;
+    return entropy;
 }
 
 // Maps the entired file into memory
@@ -314,7 +315,7 @@ static int search_conf_for_pass(File_Info *fi, All_Results *ar, Args *cmdline)
         }
         else
         {
-            line_end = line_end++;
+            line_end++;
             line_begin = line_end;
         }
     }
@@ -324,9 +325,9 @@ static int search_conf_for_pass(File_Info *fi, All_Results *ar, Args *cmdline)
     return findings;
 }
 
-static int search_line(char *line_start, char *line_end)
+static int search_line(unsigned char *line_start, unsigned char *line_end)
 {
-    char *buffer = malloc((2 + (line_end - line_start)) * sizeof(char));
+    unsigned char *buffer = malloc((2 + (line_end - line_start)) * sizeof(unsigned char));
     int loc = 0;
     int findings = 0;
     bool in_whitespace = true;
@@ -337,7 +338,7 @@ static int search_line(char *line_start, char *line_end)
     {
         return 0;
     }
-    for (char *i = line_start; i <= line_end; i++)
+    for (unsigned char *i = line_start; i <= line_end; i++)
     {
         if (in_whitespace && (*i == ' ' || *i == '\t'))
         {
@@ -352,7 +353,7 @@ static int search_line(char *line_start, char *line_end)
                 return findings;
             }
             first_non_white = false;
-            in_whitespace == false;
+            in_whitespace = false;
             if (*i == '=')
             {
                 equals_found = true;
@@ -363,11 +364,62 @@ static int search_line(char *line_start, char *line_end)
     }
     buffer[loc++] = '\0';
 
-    if (equals_found && strcasestr(buffer, "password") != NULL)
+    if (equals_found && strcasestr((char *)buffer, "password=") != NULL)
+    {
+        findings++;
+    }
+    if (equals_found && strcasestr((char *)buffer, "private_key=") != NULL)
+    {
+        findings++;
+    }
+    if (equals_found && strcasestr((char *)buffer, "private-key=") != NULL)
+    {
+        findings++;
+    }
+    if (equals_found && strcasestr((char *)buffer, "PrivateKey=") != NULL)
+    {
+        findings++;
+    }
+    if (equals_found && strcasestr((char *)buffer, "Private_Key=") != NULL)
+    {
+        findings++;
+    }
+    if (equals_found && strcasestr((char *)buffer, "password ") != NULL)
+    {
+        findings++;
+    }
+    if (equals_found && strcasestr((char *)buffer, "private_key ") != NULL)
+    {
+        findings++;
+    }
+    if (equals_found && strcasestr((char *)buffer, "private-key ") != NULL)
+    {
+        findings++;
+    }
+    if (equals_found && strcasestr((char *)buffer, "PrivateKey ") != NULL)
+    {
+        findings++;
+    }
+    if (equals_found && strcasestr((char *)buffer, "Private_Key ") != NULL)
     {
         findings++;
     }
 
     free(buffer);
     return findings;
+}
+
+static int check_for_writable_shared_object(File_Info *fi, All_Results *ar, Args *cmdline)
+{
+    if (has_global_write(fi))
+    {
+        char *name = "World writable shared object found";
+        Result *new_result = create_new_issue();
+        set_id_and_desc(48, new_result);
+        set_issue_location(fi->location, new_result);
+        set_issue_name(name, new_result);
+        add_new_result_high(new_result, ar, cmdline);
+        return 1;
+    }
+    return 0;
 }

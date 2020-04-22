@@ -41,12 +41,6 @@ void set_issue_name(char *issue_name, Result *result_node);
 void set_issue_description(char *issue_description, Result *result_node);
 void set_issue_location(char *issue_location, Result *result_nodee);
 
-void print_all_results(All_Results *all_results);
-void print_high_results(All_Results *all_results);
-void print_medium_results(All_Results *all_results);
-void print_low_results(All_Results *all_results);
-void print_info_results(All_Results *all_results);
-
 bool add_new_result_high(Result *new_result, All_Results *result, Args *cmdline);
 bool add_new_result_medium(Result *new_result, All_Results *result, Args *cmdline);
 bool add_new_result_low(Result *new_result, All_Results *result, Args *cmdline);
@@ -200,43 +194,6 @@ void set_other_info(char *other_info, Result *result_nodee)
     strncpy(result_nodee->other_info, other_info, sizeof(result_nodee->other_info));
 }
 
-// Prints all the results in non ncurse mode
-void print_all_results(All_Results *all_results)
-{
-    print_high_results(all_results);
-    print_medium_results(all_results);
-    print_low_results(all_results);
-    print_info_results(all_results);
-}
-
-// Prints the high results in non ncurse mode
-void print_high_results(All_Results *all_results)
-{
-    puts("HIGH:");
-    puts("");
-}
-
-// Prints the medium results in non ncurse mode
-void print_medium_results(All_Results *all_results)
-{
-    puts("MEDIUM:");
-    puts("");
-}
-
-// Prints the low results in non ncurse mode
-void print_low_results(All_Results *all_results)
-{
-    puts("LOW:");
-    puts("");
-}
-
-// Prints the info results in non ncurse mode
-void print_info_results(All_Results *all_results)
-{
-    puts("INFO:");
-    puts("");
-}
-
 // Adds a new fully completed issue to the High linked list
 bool add_new_result_high(Result *new_result, All_Results *all_results, Args *cmdline)
 {
@@ -338,7 +295,7 @@ static void log_issue_to_screen(Result *new_result, char *category)
     char ls_result[1024];
     char *color_code;
 
-    snprintf(ls_cmd, 1023, "ls -ltra %s --color=always", new_result->location);
+    snprintf(ls_cmd, 1023, "ls -ltra \"%s\" --color=always", new_result->location);
     FILE *fp = popen(ls_cmd, "r");
     while (fgets(ls_result, sizeof(ls_result), fp) != NULL)
     {
