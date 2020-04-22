@@ -78,7 +78,7 @@ int core_dump_scan(File_Info *fi, All_Results *ar, Args *cmdline)
         {
             char *name = "Found a world readable core dump file";
             Result *new_result = create_new_issue();
-            set_id_and_desc(44, new_result);
+            set_id_and_desc(43, new_result);
             set_issue_location(fi->location, new_result);
             set_issue_name(name, new_result);
             add_new_result_high(new_result, ar, cmdline);
@@ -194,7 +194,6 @@ static bool test_magic_number(File_Info *fi)
             break;
         }
     }
-    // puts("--------------------------------");
     // Big egg
     for (int i = 0; i < magic_size; i++)
     {

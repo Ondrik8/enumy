@@ -51,11 +51,7 @@ static int extension_checker(File_Info *fi, All_Results *ar, Args *cmdline)
     case 'c':
         break;
     case 'd':
-        // .coredump
-        // .core
         if (strcmp(fi->extension, "des") == 0)
-            findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
-        if (strcmp(fi->extension, "der") == 0)
             findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
         break;
     case 'g':
@@ -63,11 +59,6 @@ static int extension_checker(File_Info *fi, All_Results *ar, Args *cmdline)
         break;
     case 'h':
         // .hdmp
-        break;
-    case 'i':
-        // .ida
-        if (strcmp(fi->extension, "ida") == 0)
-            findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
         break;
     case 'j':
         // .jks
@@ -91,11 +82,11 @@ static int extension_checker(File_Info *fi, All_Results *ar, Args *cmdline)
     case 'p':
         if (strcmp(fi->extension, "password") == 0)
             findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
+        if (strcmp(fi->extension, "passwords") == 0)
+            findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
         if (strcmp(fi->extension, "private") == 0)
             findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
         if (strcmp(fi->extension, "pk") == 0)
-            findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
-        if (strcmp(fi->extension, "pgp") == 0)
             findings = (check_for_encryption_key(fi, ar, cmdline) == true) ? findings++ : findings;
         break;
     case 'r':
@@ -154,7 +145,7 @@ static bool check_for_encryption_key(File_Info *fi, All_Results *ar, Args *cmdli
     {
     // Log issuse as info
     NONREADABLE:
-        id = 43;
+        id = 46;
         char *name = "None readable potentianal encryption key";
         Result *new_result = create_new_issue();
         set_id_and_desc(id, new_result);

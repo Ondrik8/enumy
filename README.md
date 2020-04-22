@@ -1,6 +1,6 @@
 # Enumy
 
-Enumy is a Linux post exploitation vulnerability scanner that aims to automate as much of the intial post exploitation recon during a CTF or a pentest. Enumy has a nice interface built with ncurses if you have an SSH connection, or a standard text based interface for dumb shells.
+Enumy is a Linux post exploitation vulnerability scanner that aims to automate as much of the intial post exploitation recon during a CTF or a pentest. Enumy has a nice interface built with ncurses if you have an SSH connection, or a standard text based interface for dumb shells. With an emphisise on portablility and speed.
 
 ![Example](./docs/svg/example.svg)
 
@@ -33,4 +33,4 @@ cd output
 
 - SUID/GUID scans
 - File capabilities
-- Interesting files scan
+- Interesting files scan"
