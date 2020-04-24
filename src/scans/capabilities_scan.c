@@ -28,36 +28,47 @@ Capabilities are a per-thread attribute.
 static bool check_audit_control(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_audit_read(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_audit_write(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+
 static bool check_block_suspend(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_chown(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_dac_bypass(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+
 static bool check_dac_read_search(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_fowner(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_clear_set_id(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+
 static bool check_ipc_lock(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_ipc_owner(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_kill(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+
 static bool check_lease(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_immutable(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_mac_admin(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+
 static bool check_mac_override(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_mknod(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_net_admin(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+
 static bool check_net_bind_service(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_net_broadcast(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_net_raw(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+
 static bool check_sys_nice(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_set_gid(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_set_cap(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+
 static bool check_set_pcap(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_set_uid(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_sys_admin(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+
 static bool check_reboot(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_sys_chroot(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_sys_module(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+
 static bool check_process_accounting(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_ptrace(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_sys_resource(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
+
 static bool check_sys_time(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_sys_tty(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);
 static bool check_syslog(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);

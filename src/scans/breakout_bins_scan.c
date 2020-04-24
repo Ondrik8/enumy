@@ -196,67 +196,67 @@ int break_out_binary_scan(File_Info *fi, All_Results *ar, Args *cmdline)
         }
         break;
     case 'd':
-        if (strcmp(fi->name, "dash") == 1)
+        if (strcmp(fi->name, "dash") == 0)
         {
             id = 77;
             add_issue(id, "dash", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "date") == 1)
+        else if (strcmp(fi->name, "date") == 0)
         {
             id = 78;
             add_issue(id, "date", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "dmidecode") == 1)
+        else if (strcmp(fi->name, "dmidecode") == 0)
         {
             id = 234;
             add_issue(id, "dmidecode", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "dd") == 1)
+        else if (strcmp(fi->name, "dd") == 0)
         {
             id = 79;
             add_issue(id, "dd", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "dialog") == 1)
+        else if (strcmp(fi->name, "dialog") == 0)
         {
             id = 80;
             add_issue(id, "dialog", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "diff") == 1)
+        else if (strcmp(fi->name, "diff") == 0)
         {
             id = 81;
             add_issue(id, "diff", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "dmesg") == 1)
+        else if (strcmp(fi->name, "dmesg") == 0)
         {
             id = 82;
             add_issue(id, "dmesg", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "dmsetup") == 1)
+        else if (strcmp(fi->name, "dmsetup") == 0)
         {
             id = 83;
             add_issue(id, "dmsetup", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "dnf") == 1)
+        else if (strcmp(fi->name, "dnf") == 0)
         {
             id = 84;
             add_issue(id, "dnf", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "docker") == 1)
+        else if (strcmp(fi->name, "docker") == 0)
         {
             id = 85;
             add_issue(id, "docker", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "dpkg") == 1)
+        else if (strcmp(fi->name, "dpkg") == 0)
         {
             id = 86;
             add_issue(id, "dpkg", fi, ar, cmdline);
@@ -681,7 +681,7 @@ int break_out_binary_scan(File_Info *fi, All_Results *ar, Args *cmdline)
             add_issue(id, "nroff", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "nsenter") == 1)
+        else if (strcmp(fi->name, "nsenter") == 0)
         {
             id = 154;
             add_issue(id, "nsenter", fi, ar, cmdline);
@@ -695,7 +695,7 @@ int break_out_binary_scan(File_Info *fi, All_Results *ar, Args *cmdline)
             add_issue(id, "od", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "openssl") == 1)
+        else if (strcmp(fi->name, "openssl") == 0)
         {
             id = 156;
             add_issue(id, "openssl", fi, ar, cmdline);
@@ -709,55 +709,55 @@ int break_out_binary_scan(File_Info *fi, All_Results *ar, Args *cmdline)
             add_issue(id, "pdb", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "perl") == 1)
+        else if (strcmp(fi->name, "perl") == 0)
         {
             id = 158;
             add_issue(id, "perl", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "pg") == 1)
+        else if (strcmp(fi->name, "pg") == 0)
         {
             id = 159;
             add_issue(id, "pg", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "php") == 1)
+        else if (strcmp(fi->name, "php") == 0)
         {
             id = 160;
             add_issue(id, "php", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "pic") == 1)
+        else if (strcmp(fi->name, "pic") == 0)
         {
             id = 161;
             add_issue(id, "pic", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "pico") == 1)
+        else if (strcmp(fi->name, "pico") == 0)
         {
             id = 162;
             add_issue(id, "pico", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "pip") == 1)
+        else if (strcmp(fi->name, "pip") == 0)
         {
             id = 163;
             add_issue(id, "pip", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "pry") == 1)
+        else if (strcmp(fi->name, "pry") == 0)
         {
             id = 164;
             add_issue(id, "pry", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "puppet") == 1)
+        else if (strcmp(fi->name, "puppet") == 0)
         {
             id = 165;
             add_issue(id, "puppet", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "python") == 1)
+        else if (strcmp(fi->name, "python") == 0)
         {
             id = 166;
             add_issue(id, "python", fi, ar, cmdline);
@@ -771,79 +771,79 @@ int break_out_binary_scan(File_Info *fi, All_Results *ar, Args *cmdline)
             add_issue(id, "rake", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "readelf") == 1)
+        else if (strcmp(fi->name, "readelf") == 0)
         {
             id = 168;
             add_issue(id, "readelf", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "red") == 1)
+        else if (strcmp(fi->name, "red") == 0)
         {
             id = 169;
             add_issue(id, "red", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "redcarpet") == 1)
+        else if (strcmp(fi->name, "redcarpet") == 0)
         {
             id = 170;
             add_issue(id, "redcarpet", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "restic") == 1)
+        else if (strcmp(fi->name, "restic") == 0)
         {
             id = 171;
             add_issue(id, "restic", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "rlogin") == 1)
+        else if (strcmp(fi->name, "rlogin") == 0)
         {
             id = 172;
             add_issue(id, "rlogin", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "rlwrap") == 1)
+        else if (strcmp(fi->name, "rlwrap") == 0)
         {
             id = 173;
             add_issue(id, "rlwrap", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "rpm") == 1)
+        else if (strcmp(fi->name, "rpm") == 0)
         {
             id = 174;
             add_issue(id, "rpm", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "rpmquery") == 1)
+        else if (strcmp(fi->name, "rpmquery") == 0)
         {
             id = 175;
             add_issue(id, "rpmquery", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "rsync") == 1)
+        else if (strcmp(fi->name, "rsync") == 0)
         {
             id = 176;
             add_issue(id, "rsync", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "ruby") == 1)
+        else if (strcmp(fi->name, "ruby") == 0)
         {
             id = 177;
             add_issue(id, "ruby", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "run-mailcap") == 1)
+        else if (strcmp(fi->name, "run-mailcap") == 0)
         {
             id = 178;
             add_issue(id, "run", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "run-parts") == 1)
+        else if (strcmp(fi->name, "run-parts") == 0)
         {
             id = 179;
             add_issue(id, "run-parts", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "rvim") == 1)
+        else if (strcmp(fi->name, "rvim") == 0)
         {
             id = 180;
             add_issue(id, "rvim", fi, ar, cmdline);
@@ -857,67 +857,67 @@ int break_out_binary_scan(File_Info *fi, All_Results *ar, Args *cmdline)
             add_issue(id, "scp", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "screen") == 1)
+        else if (strcmp(fi->name, "screen") == 0)
         {
             id = 182;
             add_issue(id, "screen", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "script") == 1)
+        else if (strcmp(fi->name, "script") == 0)
         {
             id = 183;
             add_issue(id, "script", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "sed") == 1)
+        else if (strcmp(fi->name, "sed") == 0)
         {
             id = 184;
             add_issue(id, "sed", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "service") == 1)
+        else if (strcmp(fi->name, "service") == 0)
         {
             id = 185;
             add_issue(id, "service", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "setarch") == 1)
+        else if (strcmp(fi->name, "setarch") == 0)
         {
             id = 186;
             add_issue(id, "setarch", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "sftp") == 1)
+        else if (strcmp(fi->name, "sftp") == 0)
         {
             id = 187;
             add_issue(id, "sftp", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "shuf") == 1)
+        else if (strcmp(fi->name, "shuf") == 0)
         {
             id = 188;
             add_issue(id, "shuf", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "smbclient") == 1)
+        else if (strcmp(fi->name, "smbclient") == 0)
         {
             id = 189;
             add_issue(id, "smbclient", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "socat") == 1)
+        else if (strcmp(fi->name, "socat") == 0)
         {
             id = 190;
             add_issue(id, "socat", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "soelim") == 1)
+        else if (strcmp(fi->name, "soelim") == 0)
         {
             id = 191;
             add_issue(id, "soelim", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "sort") == 1)
+        else if (strcmp(fi->name, "sort") == 0)
         {
             id = 192;
             add_issue(id, "sort", fi, ar, cmdline);
@@ -929,37 +929,37 @@ int break_out_binary_scan(File_Info *fi, All_Results *ar, Args *cmdline)
             add_issue(id, "sqlite4", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "ssh") == 1)
+        else if (strcmp(fi->name, "ssh") == 0)
         {
             id = 194;
             add_issue(id, "ssh", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "start-stop-daemon") == 1)
+        else if (strcmp(fi->name, "start-stop-daemon") == 0)
         {
             id = 195;
             add_issue(id, "start-stop-daemon", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "stdbuf") == 1)
+        else if (strcmp(fi->name, "stdbuf") == 0)
         {
             id = 196;
             add_issue(id, "stdbuf", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "strace") == 1)
+        else if (strcmp(fi->name, "strace") == 0)
         {
             id = 197;
             add_issue(id, "strace", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "strings") == 1)
+        else if (strcmp(fi->name, "strings") == 0)
         {
             id = 198;
             add_issue(id, "strings", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "systemctl") == 1)
+        else if (strcmp(fi->name, "systemctl") == 0)
         {
             id = 199;
             add_issue(id, "systemctl", fi, ar, cmdline);
@@ -973,37 +973,37 @@ int break_out_binary_scan(File_Info *fi, All_Results *ar, Args *cmdline)
             add_issue(id, "tac", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "tail") == 1)
+        else if (strcmp(fi->name, "tail") == 0)
         {
             id = 201;
             add_issue(id, "tail", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "tar") == 1)
+        else if (strcmp(fi->name, "tar") == 0)
         {
             id = 202;
             add_issue(id, "tar", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "taskset") == 1)
+        else if (strcmp(fi->name, "taskset") == 0)
         {
             id = 203;
             add_issue(id, "taskset", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "tclsh") == 1)
+        else if (strcmp(fi->name, "tclsh") == 0)
         {
             id = 204;
             add_issue(id, "tclsh", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "tcpdump") == 1)
+        else if (strcmp(fi->name, "tcpdump") == 0)
         {
             id = 205;
             add_issue(id, "tcpdump", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "tee") == 1)
+        else if (strcmp(fi->name, "tee") == 0)
         {
             id = 206;
             add_issue(id, "tee", fi, ar, cmdline);

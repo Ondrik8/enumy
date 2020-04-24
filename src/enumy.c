@@ -62,9 +62,11 @@ void help()
     puts("");
     puts(" -o <loc>     Save results to location");
     puts(" -i <loc>     Ignore files in this directory (usefull for network shares)");
-    puts(" -q           Run quick scans");
+    puts(" -w <loc>     Only walk files in this directory (usefull for devlopment)");
+    puts(" -f           Run full scans");
     puts(" -n           Enabled ncurses");
     puts(" -h           Show help");
+    exit(0);
 }
 
 void *handle_user_input(void *user_input_args)
@@ -121,8 +123,8 @@ int main(int argc, char *argv[])
 
     struct Args *args = (struct Args *)malloc(sizeof(struct Args));
     args->save_location[0] = '\0';
-    args->enabled_all_scans = true;
-    args->enabled_quick_scans = false;
+    args->walk_dir[0] = '/';
+    args->enabled_full_scans = false;
     args->enabled_ncurses = false;
 
     struct Ncurses_Layout nlayout = {
@@ -139,7 +141,7 @@ int main(int argc, char *argv[])
 
     signal(SIGINT, sigint_handler);
 
-    while ((opt = getopt(argc, argv, "qhno:i:")) != -1)
+    while ((opt = getopt(argc, argv, "fhno:i:w:")) != -1)
     {
         switch (opt)
         {
@@ -148,9 +150,8 @@ int main(int argc, char *argv[])
             help();
             break;
 
-        case 'q':
-            args->enabled_quick_scans = true;
-            args->enabled_all_scans = false;
+        case 'f':
+            args->enabled_full_scans = true;
             break;
 
         case 'o':
@@ -159,6 +160,9 @@ int main(int argc, char *argv[])
 
         case 'i':
             strncpy(args->ignore_scan_dir, optarg, MAXSIZE);
+            break;
+        case 'w':
+            strncpy(args->walk_dir, optarg, MAXSIZE);
             break;
         case 'n':
             args->enabled_ncurses = true;

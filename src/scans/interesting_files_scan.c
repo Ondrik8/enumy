@@ -11,6 +11,7 @@
 #include "results.h"
 #include "utils.h"
 #include "fs.h"
+#include "elf_parsing.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -58,7 +59,7 @@ static int extension_checker(File_Info *fi, All_Results *ar, Args *cmdline)
     case 'c':
         if (strcmp(fi->extension, "config") == 0)
             findings += search_conf_for_pass(fi, ar, cmdline);
-        if (strcmp(fi->extension, "conf") == 0)
+        else if (strcmp(fi->extension, "conf") == 0)
             findings += search_conf_for_pass(fi, ar, cmdline);
         break;
     case 'd':
@@ -91,13 +92,17 @@ static int extension_checker(File_Info *fi, All_Results *ar, Args *cmdline)
         // .afx
         break;
     case 'p':
-        if (strcmp(fi->extension, "password") == 0)
+        if (strcmp(fi->extension, "ini") == 0)
+            findings += (search_conf_for_pass(fi, ar, cmdline) == true) ? 1 : 0;
+        else if (strcmp(fi->extension, "php") == 0)
+            findings += (search_conf_for_pass(fi, ar, cmdline) == true) ? 1 : 0;
+        else if (strcmp(fi->extension, "password") == 0)
             findings += (check_for_encryption_key(fi, ar, cmdline) == true) ? 1 : 0;
-        if (strcmp(fi->extension, "passwords") == 0)
+        else if (strcmp(fi->extension, "passwords") == 0)
             findings += (check_for_encryption_key(fi, ar, cmdline) == true) ? 1 : 0;
-        if (strcmp(fi->extension, "private") == 0)
+        else if (strcmp(fi->extension, "private") == 0)
             findings += (check_for_encryption_key(fi, ar, cmdline) == true) ? 1 : 0;
-        if (strcmp(fi->extension, "pk") == 0)
+        else if (strcmp(fi->extension, "pk") == 0)
             findings += (check_for_encryption_key(fi, ar, cmdline) == true) ? 1 : 0;
         break;
     case 'r':
@@ -112,7 +117,7 @@ static int extension_checker(File_Info *fi, All_Results *ar, Args *cmdline)
         // .sqlite
         if (strcmp(fi->extension, "secret") == 0)
             findings += (check_for_encryption_key(fi, ar, cmdline) == true) ? 1 : 0;
-        if (strcmp(fi->extension, "so") == 0)
+        else if (strcmp(fi->extension, "so") == 0)
             findings += check_for_writable_shared_object(fi, ar, cmdline);
         break;
     case 'v':
@@ -140,6 +145,10 @@ static int file_name_checker(File_Info *fi, All_Results *ar, Args *cmdline)
         {
             findings++;
         }
+    }
+    if (strcasestr(fi->name, "core") != NULL)
+    {
+        findings += core_dump_scan(fi, ar, cmdline);
     }
     return findings;
 }
@@ -365,6 +374,14 @@ static int search_line(unsigned char *line_start, unsigned char *line_end)
     buffer[loc++] = '\0';
 
     if (equals_found && strcasestr((char *)buffer, "password=") != NULL)
+    {
+        findings++;
+    }
+    if (equals_found && strcasestr((char *)buffer, "Password=") != NULL)
+    {
+        findings++;
+    }
+    if (equals_found && strcasestr((char *)buffer, "passwd") != NULL)
     {
         findings++;
     }

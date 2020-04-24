@@ -41,7 +41,7 @@ void start_scan(Ncurses_Layout *layout, All_Results *all_results, Args *args)
     char *_;
 
     struct Walk_Args walk_args = {
-        .walk_path = "/",
+        .walk_path = args->walk_dir,
         .all_results = all_results,
         .cmdline = args};
 
