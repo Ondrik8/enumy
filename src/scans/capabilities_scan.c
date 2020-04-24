@@ -13,16 +13,21 @@
 #include <errno.h>
 
 /*
-For the purpose of performing permission checks, traditional UNIX implementations distinguish two 
-categories of processes: privileged processes (whose effective user ID is 0, referred to as 
-superuser or root), and unprivileged processes (whose effective UID is nonzero).
-Privileged processes bypass all kernel permission checks, while unprivileged processes are subject to
-full permission checking based on the process's credentials
-(usually: effective UID, effective GID, and supplementary group list).
+    Capabilities allow the kernel to give a file elevated permissions while performing a task that
+    would require a high privilaged UID. This means that we could abuse these files if found and 
+    the file is found to be exploitable in some way
 
-Starting with kernel 2.2, Linux divides the privileges traditionally associated with superuser into
-distinct units, known as capabilities, which can be independently enabled and disabled. 
-Capabilities are a per-thread attribute.
+    Man page:
+    For the purpose of performing permission checks, traditional UNIX implementations distinguish two 
+    categories of processes: privileged processes (whose effective user ID is 0, referred to as 
+    superuser or root), and unprivileged processes (whose effective UID is nonzero).
+    Privileged processes bypass all kernel permission checks, while unprivileged processes are subject to
+    full permission checking based on the process's credentials
+    (usually: effective UID, effective GID, and supplementary group list).
+
+    Starting with kernel 2.2, Linux divides the privileges traditionally associated with superuser into
+    distinct units, known as capabilities, which can be independently enabled and disabled. 
+    Capabilities are a per-thread attribute.
 */
 
 static bool check_audit_control(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline);

@@ -74,5 +74,13 @@ typedef struct Elf_File
 
 } Elf_File;
 
+typedef struct Tag_Array
+{
+    char *tag_value;
+    int size;
+} Tag_Array;
+
+Tag_Array *search_dynamic_for_value(Elf_File *file, Tag tag);
+void close_elf(Elf_File *elf_file, File_Info *fi);
 int has_elf_magic_bytes(File_Info *fi);
 Elf_File *parse_elf(File_Info *fi);

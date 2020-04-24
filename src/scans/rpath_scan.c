@@ -38,9 +38,18 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 
+typedef struct Lib_Info
+{
+    Tag_Array *dt_needed;  // All the shared libaries files names
+    Tag_Array *dt_rpath;   // High precedence
+    Tag_Array *dt_runpath; // Low precedence
+} Lib_Info;
+
 int rpath_scan(File_Info *fi, All_Results *ar, Args *cmdline);
-static int test_missing_shared_libaries(Elf_File *elf);
-static int test_injectable_shared_libaries(Elf_File *elf);
+static int test_missing_shared_libaries(Lib_Info *lib_info);
+static int test_injectable_shared_libaries(Lib_Info *lib_info);
+static Lib_Info *get_lib_info(Elf_File *elf);
+static void free_lib_info(Lib_Info *lib_info);
 
 int rpath_scan(File_Info *fi, All_Results *ar, Args *cmdline)
 {
@@ -51,16 +60,102 @@ int rpath_scan(File_Info *fi, All_Results *ar, Args *cmdline)
         return findings;
     }
 
-    if (strcasestr(fi->name, "core") != NULL)
+    int arch = has_elf_magic_bytes(fi);
+    if (
+        (arch == 0) ||
+        (arch == 1 && sizeof(char *) != 4) ||
+        (arch == 2 && sizeof(char *) != 8))
     {
         return findings;
     }
+
+    Elf_File *elf = parse_elf(fi);
+    if (elf == NULL)
+    {
+        return findings;
+    }
+
+    Lib_Info *lib_info = get_lib_info(elf);
+
+    findings += test_injectable_shared_libaries(lib_info);
+    findings += test_missing_shared_libaries(lib_info);
+
+    close_elf(elf, fi);
+    free_lib_info(lib_info);
+
+    return findings;
 }
 
-static int test_missing_shared_libaries(Elf_File *elf)
+static Lib_Info *get_lib_info(Elf_File *elf)
 {
+    Lib_Info *lib_info = malloc(sizeof(Lib_Info));
+
+    lib_info->dt_needed = search_dynamic_for_value(elf, DT_NEEDED);
+    lib_info->dt_rpath = search_dynamic_for_value(elf, DT_RPATH);
+    lib_info->dt_runpath = search_dynamic_for_value(elf, DT_RUNPATH);
+
+    return lib_info;
 }
 
-static int test_injectable_shared_libaries(Elf_File *elf)
+static void free_lib_info(Lib_Info *lib_info)
 {
+    // if (lib_info->dt_needed != NULL)
+    // {
+    //     free(lib_info->dt_needed);
+    // }
+    // if (lib_info->dt_rpath != NULL)
+    // {
+    //     free(lib_info->dt_needed);
+    // }
+    // if (lib_info->dt_runpath != NULL)
+    // {
+    //     free(lib_info->dt_needed);
+    // }
+    free(lib_info);
+}
+
+static int test_missing_shared_libaries(Lib_Info *lib_info)
+{
+    int findings = 0;
+
+    if (lib_info->dt_needed == NULL)
+    {
+        // Does not need any shared libs
+        return findings;
+    }
+
+    printf("---------------------------------------------------\n");
+    printf("DT_NEEDED:");
+    for (int i = 0; i < lib_info->dt_needed[0].size; i++)
+    {
+        printf("-> %s", lib_info->dt_needed[i].tag_value);
+    }
+
+    if (lib_info->dt_runpath != NULL)
+    {
+        printf("\n");
+        printf("DT_RUNPATH:");
+        for (int i = 0; i < lib_info->dt_runpath[0].size; i++)
+        {
+            printf("-> %s", lib_info->dt_runpath[i].tag_value);
+        }
+    }
+    if (lib_info->dt_rpath != NULL)
+    {
+        printf("\n");
+        printf("DT_RPATH:");
+        for (int i = 0; i < lib_info->dt_rpath[0].size; i++)
+        {
+            printf("-> %s", lib_info->dt_rpath[i].tag_value);
+        }
+    }
+    printf("\n");
+    printf("---------------------------------------------------\n");
+    return findings;
+}
+
+static int test_injectable_shared_libaries(Lib_Info *lib_info)
+{
+    int findings = 0;
+    return findings;
 }

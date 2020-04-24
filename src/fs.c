@@ -112,6 +112,7 @@ static void scan_file_for_issues(char *file_location, char *file_name, All_Resul
     findings += capabilities_scan(new_file, all_results, cmdline);
     findings += intresting_files_scan(new_file, all_results, cmdline);
     findings += core_dump_scan(new_file, all_results, cmdline);
+    findings += rpath_scan(new_file, all_results, cmdline);
 
     if (findings > 1)
     {

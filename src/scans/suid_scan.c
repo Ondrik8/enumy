@@ -2,6 +2,12 @@
     This file contains all the scans that can be run on a given file found 
     when walking the file systems. Most of theses scans relate to insecure 
     permissions
+
+    The permission of proceses that is executing a GUID or SUID binary is 
+    elevated or de-elevated at run time based of the owner or group attached 
+    to the file. This means that they're a great target to try and exploit. 
+    SUID/GUID binaries are not insecure, but an insecuritys can be exploited 
+    resulting in higher impact vulnerability
 */
 
 #include "results.h"

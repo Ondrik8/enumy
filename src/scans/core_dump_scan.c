@@ -1,5 +1,16 @@
 /* 
     This file is meant to try and find core dump files
+
+    Core dump file can be found by mapping the file into memory 
+    inside of the Elf's elf header there is a value called e_type
+    this value tells the kernel what type of elf file this is 
+    if the file's elf type is set to ET_CORE, then we can report 
+    this as an issue. This is because core dumps should not 
+    be allowed to exist on a production machine. Core dumps can
+    allow an attacker to develop zero days and if the core dump 
+    file contains an sensitive data relating to passwords crypto
+    etc, then an attacker can find this information to further 
+    compromise the target machine. 
 */
 
 #define _GNU_SOURCE
@@ -24,12 +35,7 @@ int core_dump_scan(File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int findings = 0;
 
-    if (cmdline->enabled_full_scans != true)
-    {
-        return findings;
-    }
-
-    if (strcasestr(fi->name, "core") != NULL)
+    if (strcasestr(fi->name, "core") == NULL)
     {
         return findings;
     }
@@ -83,5 +89,6 @@ int core_dump_scan(File_Info *fi, All_Results *ar, Args *cmdline)
         }
     }
 
+    close_elf(elf, fi);
     return findings;
 }

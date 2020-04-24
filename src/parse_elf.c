@@ -23,6 +23,7 @@
 #include "main.h"
 #include "results.h"
 #include "scan.h"
+#include "utils.h"
 #include "elf_parsing.h"
 
 #include <stdio.h>
@@ -42,7 +43,7 @@ static inline Elf_Shdr *elf_sheader(const void *map_start);
 static inline Elf_Shdr *elf_section(const void *map_start, int idx);
 static inline Elf_Phdr *elf_program_header(Elf_File *file);
 static inline char *elf_shstr_table(const void *map_start);
-static inline const char *search_dynamic_for_value(Elf_File *file, Tag tag);
+Tag_Array *search_dynamic_for_value(Elf_File *file, Tag tag);
 static Elf_Phdr *get_dynamic_sections_program_header(Elf_File *file);
 static Elf_Off elf_dynamic_strings_offset(Elf_File *file);
 
@@ -172,14 +173,53 @@ Elf_File *parse_elf(File_Info *fi)
         return NULL;
     }
 
-    // char *dt_runpath = search_dynamic_for_value(file, DT_RUNPATH);
-    // char *dt_rpath = search_dynamic_for_value(file, DT_RPATH);
-    // char *dt_needed = search_dynamic_for_value(file, DT_NEEDED);
-    // printf("DT_RUNPATH: -> %s\n", dt_runpath);
-    // printf("DT_RPATH:   -> %s\n", dt_rpath);
-    // printf("DT_NEEEDED: -> %s\n", dt_needed);
-    // close_elf(file, fi);
     return file;
+}
+
+Tag_Array *search_dynamic_for_value(Elf_File *file, Tag tag)
+{
+    int number_of_elements = 0;
+    int number_of_findings = 0;
+    Elf_Internal_Dyn *entry = file->dynamic_header->p_offset + file->address;
+    Elf_Internal_Dyn *entry2 = file->dynamic_header->p_offset + file->address;
+
+    for (entry; (char *)(entry + 2) <= (char *)(file->dynamic_header->p_offset + file->address + file->dynamic_header->p_filesz); entry++)
+    {
+        if (entry->d_tag == tag)
+        {
+            number_of_findings++;
+        }
+        number_of_elements++;
+        if (entry->d_tag == DT_NULL)
+        {
+            break;
+        }
+    }
+
+    if (number_of_findings == 0)
+    {
+        return NULL;
+    }
+
+    Tag_Array *findings = malloc(sizeof(Tag_Array) * number_of_findings);
+    if (findings == NULL)
+    {
+        out_of_memory_err();
+    }
+    findings[0].size = number_of_findings;
+
+    int current_findings = 0;
+
+    for (int i = 0; i < number_of_elements; i++)
+    {
+        if (entry2->d_tag == tag)
+        {
+            findings[current_findings].tag_value = file->address + file->dynamic_strings + entry2->d_un.d_ptr;
+            current_findings++;
+        }
+        entry2++;
+    }
+    return findings;
 }
 
 void close_elf(Elf_File *elf_file, File_Info *fi)
@@ -245,33 +285,6 @@ static Elf_Phdr *get_dynamic_sections_program_header(Elf_File *file)
         {
             return &file->program_headers[i];
         }
-    }
-    return NULL;
-}
-
-static inline const char *search_dynamic_for_value(Elf_File *file, Tag tag)
-{
-    int number_of_elements = 0;
-    Elf_Internal_Dyn *entry = file->dynamic_header->p_offset + file->address;
-    Elf_Internal_Dyn *entry2 = file->dynamic_header->p_offset + file->address;
-
-    for (entry; (char *)(entry + 2) <= (char *)(file->dynamic_header->p_offset + file->address + file->dynamic_header->p_filesz); entry++)
-    {
-        puts("asdfasdfasf");
-        number_of_elements++;
-        if (entry->d_tag == DT_NULL)
-        {
-            break;
-        }
-    }
-
-    for (int i = 0; i < number_of_elements; i++)
-    {
-        if (entry2->d_tag == tag)
-        {
-            return file->address + file->dynamic_strings + entry2->d_un.d_ptr;
-        }
-        entry2++;
     }
     return NULL;
 }
