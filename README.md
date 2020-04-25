@@ -14,7 +14,7 @@ You can download the final binary from the release x86 or x64 tab. _Statically l
 
 Transfer the final enumy binary to the target machine
 
-```shell
+```
  ▄█▀─▄▄▄▄▄▄▄─▀█▄  _____
  ▀█████████████▀ |   __|___ _ _ _____ _ _
      █▄███▄█     |   __|   | | |     | | |
