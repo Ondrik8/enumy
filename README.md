@@ -1,3 +1,12 @@
+<a href="https://scan.coverity.com/projects/luke-goddard-enumy">
+  <img alt="Coverity Scan Build Status"
+       src="https://scan.coverity.com/projects/20962/badge.svg"/>
+</a>
+
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
+
+[![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
+
 # Enumy
 
 ![Example](./docs/svg/example.svg)
@@ -92,10 +101,18 @@ Changing the default number of threads is pretty pointless __unless__  you're ru
 - 8 Threads -> `system 468% cpu 15.863 total`
 - 12 Thread -> `system 420% cpu 20.548 total`
 
-### Full Scan Times 
+### Full Scan Times
 
 - 1 Thread  -> `system 50%  cpu 3:16.38 total`
 - 2 Thread  -> `system 86%  cpu 1:33.95 total`
 - 4 Thread  -> `system 165% cpu 47.753 total`
 - 8 Threads -> `system 366% cpu 29.768 total`
 - 12 Thread -> `system 467% cpu 29.815 total`
+
+## How To Contribute
+
+- If you can think of a scan idea that has not been implemented, raise it as an issue. 
+- Make a pull request, make sure that.
+  - Each scan is given a unique ID
+  - Multiple related scans are in the same file.
+  - No more than one scan/test per function.
