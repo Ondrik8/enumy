@@ -266,7 +266,7 @@ static inline Elf_Phdr *elf_program_header(Elf_File *file)
 }
 
 // This function searches for the section pointing to the dynamic string offset
-// This function is takes up around half the CPU time, because elf files can have
+// This function is takes up around 63% of CPU time, because elf files can have
 // thousands of sections.
 static Elf_Off elf_dynamic_strings_offset(Elf_File *file)
 {
