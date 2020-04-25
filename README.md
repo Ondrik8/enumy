@@ -65,8 +65,8 @@ cd output
 
 ## Optimization
 
-Changing the default number of threads is pretty pointless _unless_  you're running a full scan. A full scan will do a lot more IO so threads greatly increase scan times. For a full scan on my system it took the following times.
+Changing the default number of threads is pretty pointless __unless__  you're running a full scan. A full scan will do a lot more IO so threads greatly increase scan times. For a full scan on my system it took the following times.
 
-- 195 seconds with 1 threads
-- 52 seconds with 4 threads
-- 25 seconds with 12 threads
+- 1 Thread -> 195 seconds
+- 4 Thread -> 52 seconds
+- 12 Thread -> 25 seconds
