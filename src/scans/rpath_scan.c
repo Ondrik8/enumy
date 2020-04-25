@@ -80,6 +80,8 @@ int rpath_scan(File_Info *fi, All_Results *ar, Args *cmdline)
         return findings;
     }
 
+    elf_parse_dynamic_sections(elf);
+
     Lib_Info *lib_info = get_lib_info(elf);
 
     findings += test_injectable_shared_libaries(lib_info);

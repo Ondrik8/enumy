@@ -25,8 +25,7 @@ $ ./enumy64 -h
 
 ------------------------------------------
 
-Enumy - Used to enumerate the target
-the target environment and look for common
+Enumy - Used to enumerate the target environment and look for common
 security vulnerabilities and hostspots
 
  -o <loc>     Save results to location
@@ -67,6 +66,8 @@ cd output
 
 Changing the default number of threads is pretty pointless __unless__  you're running a full scan. A full scan will do a lot more IO so threads greatly increase scan times. For a full scan on my system it took the following times.
 
-- 1 Thread  -> 195 seconds
-- 4 Thread  -> 52 seconds
-- 12 Thread -> 25 seconds
+- 1 Thread  -> `system 50% cpu 3:16.38 total`
+- 2 Thread  -> `system 86% cpu 1:33.95 total`
+- 4 Thread  -> `system 165% cpu 47.753 total`
+- 8 Threads -> `system 366% cpu 29.768 total`
+- 12 Thread -> `system 467% cpu 29.815 total`

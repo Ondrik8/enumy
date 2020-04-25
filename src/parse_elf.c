@@ -37,6 +37,7 @@
 
 int has_elf_magic_bytes(File_Info *fi);
 Elf_File *mmap_elf(File_Info *fi);
+bool elf_parse_dynamic_sections(Elf_File *file);
 
 static inline Elf_Ehdr *elf_header(const void *map_start);
 static inline Elf_Shdr *elf_sheader(const void *map_start);
@@ -170,11 +171,14 @@ Elf_File *parse_elf(File_Info *fi)
         return NULL;
     }
 
+    return file;
+}
+
+bool elf_parse_dynamic_sections(Elf_File *file)
+{
     // Not all ELF files have a dynamic sections
     file->dynamic_strings = elf_dynamic_strings_offset(file);
     file->dynamic_header = get_dynamic_sections_program_header(file);
-
-    return file;
 }
 
 Tag_Array *search_dynamic_for_value(Elf_File *file, Tag tag)
@@ -261,6 +265,9 @@ static inline Elf_Phdr *elf_program_header(Elf_File *file)
     return (Elf_Phdr *)(file->address + file->header->e_phoff);
 }
 
+// This function searches for the section pointing to the dynamic string offset
+// This function is takes up around half the CPU time, because elf files can have
+// thousands of sections.
 static Elf_Off elf_dynamic_strings_offset(Elf_File *file)
 {
     if (file->header->e_shnum + ((Elf_Addr)file->sections - (Elf_Addr)file->address) > (long unsigned int)file->fi->stat->st_size)
