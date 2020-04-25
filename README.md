@@ -8,9 +8,33 @@ Enumy is a Linux post exploitation vulnerability scanner that aims to automate a
 
 You can download the final binary from the release x86 or x64 tab. _Statically linked to musl_
 
+- [latest release](https://github.com/luke-goddard/enumy/releases)
+
 ## Usage
 
 Transfer the final enumy binary to the target machine
+
+```shell
+ ▄█▀─▄▄▄▄▄▄▄─▀█▄  _____
+ ▀█████████████▀ |   __|___ _ _ _____ _ _
+     █▄███▄█     |   __|   | | |     | | |
+      █████      |_____|_|_|___|_|_|_|_  |
+      █▀█▀█                          |___|
+
+------------------------------------------
+
+Enumy - Used to enumerate the target
+the target environment and look for common
+security vulnerabilities and hostspots
+
+ -o <loc>     Save results to location
+ -i <loc>     Ignore files in this directory (usefull for network shares)
+ -w <loc>     Only walk files in this directory (usefull for devlopment)
+ -t <num>     Threads (default 4)
+ -f           Run full scans
+ -n           Enabled ncurses
+ -h           Show help
+ ```
 
 ## Compilation
 
@@ -37,10 +61,9 @@ cd output
 - Coredump scan
 - Breakout binary scan
 
-
 ## Optimization
 
-Changing the default number of threads is pretty pointless _unless_  you're running a full scan. A full scan will do a lot more IO so threads greatly increase scan times. For a full scan on my system it took the following times. 
+Changing the default number of threads is pretty pointless _unless_  you're running a full scan. A full scan will do a lot more IO so threads greatly increase scan times. For a full scan on my system it took the following times.
 
 - 195 seconds with 1 threads
 - 52 seconds with 4 threads
