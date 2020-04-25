@@ -37,3 +37,16 @@ $(OBJ_DIR):
 
 clean:
 	$(RM) $(OBJ) $(OBJ_SCAN)
+
+.PHONY: cov
+
+cov: 
+	make clean 
+	cov-build --dir cov-int make 
+	tar czvf enumy-cov.tgz cov-int
+	echo curl --form token=`cat cov-token` \
+	--form email=`cat email` \
+	--form file=@enumy-cov.tgz\
+	--form version="Version" \
+	--form description="Description" \
+	https://scan.coverity.com/builds?project=luke-goddard%2Fenumy

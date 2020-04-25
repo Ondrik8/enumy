@@ -11,3 +11,8 @@ compile_commands.json
 enumy
 *.log
 vgcore*
+*.tgz
+cov-int/
+cov-int/*
+email
+cov-token
