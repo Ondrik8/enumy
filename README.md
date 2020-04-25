@@ -1,10 +1,5 @@
-<a href="https://scan.coverity.com/projects/luke-goddard-enumy">
-  <img alt="Coverity Scan Build Status"
-       src="https://scan.coverity.com/projects/20962/badge.svg"/>
-</a>
-
+<a href="https://scan.coverity.com/projects/luke-goddard-enumy"><img alt="Coverity Scan Build Status" src="https://scan.coverity.com/projects/20962/badge.svg"/></a>
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
-
 [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
 
 # Enumy
