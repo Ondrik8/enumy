@@ -108,6 +108,8 @@ All_Results *initilize_total_results()
     all_results->high->next = NULL;
     all_results->high->previous = NULL;
 
+    pthread_mutex_init(&all_results->mutex, NULL);
+
     return all_results;
 }
 
@@ -207,7 +209,9 @@ bool add_new_result_high(Result *new_result, All_Results *all_results, Args *cmd
 
     if (cmdline->enabled_ncurses == false)
     {
+        pthread_mutex_lock(&all_results->mutex);
         log_issue_to_screen(new_result, "High");
+        pthread_mutex_unlock(&all_results->mutex);
     }
 
     return true;
@@ -226,7 +230,9 @@ bool add_new_result_medium(Result *new_result, All_Results *all_results, Args *c
 
     if (cmdline->enabled_ncurses == false)
     {
+        pthread_mutex_lock(&all_results->mutex);
         log_issue_to_screen(new_result, "Medium");
+        pthread_mutex_unlock(&all_results->mutex);
     }
 
     return true;
@@ -245,7 +251,9 @@ bool add_new_result_low(Result *new_result, All_Results *all_results, Args *cmdl
 
     if (cmdline->enabled_ncurses == false)
     {
+        pthread_mutex_lock(&all_results->mutex);
         log_issue_to_screen(new_result, "Low");
+        pthread_mutex_unlock(&all_results->mutex);
     }
 
     return true;
@@ -264,7 +272,9 @@ bool add_new_result_info(Result *new_result, All_Results *all_results, Args *cmd
 
     if (cmdline->enabled_ncurses == false)
     {
+        pthread_mutex_lock(&all_results->mutex);
         log_issue_to_screen(new_result, "Info");
+        pthread_mutex_unlock(&all_results->mutex);
     }
 
     return true;

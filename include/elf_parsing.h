@@ -18,6 +18,9 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 
+#define X64 2
+#define X86 1
+
 #ifdef __amd64
 typedef Elf64_Ehdr Elf_Ehdr; // Elf Header
 typedef Elf64_Phdr Elf_Phdr; // Program Header

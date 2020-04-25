@@ -46,6 +46,8 @@ void walk_file_system(char *entry_location, All_Results *all_results, Args *cmdl
     struct dirent *entry;
     char file_location[MAX_FILE_SIZE];
 
+    file_location[0] = '\0';
+
     dir = opendir(entry_location);
 
     if (dir == NULL)

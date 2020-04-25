@@ -96,11 +96,11 @@ int has_elf_magic_bytes(File_Info *fi)
     {
         if (values[4] == ELFCLASS32)
         {
-            return 1;
+            return X86;
         }
         else if (values[4] == ELFCLASS64)
         {
-            return 2;
+            return X64;
         }
     }
     return 0;
@@ -116,11 +116,11 @@ Elf_File *parse_elf(File_Info *fi)
     {
         return false;
     }
-    if (magic_result == 1 && sizeof(char *) == 8)
+    if (magic_result == X64 && sizeof(char *) != 8)
     {
         return false;
     }
-    if (magic_result == 2 && sizeof(char *) == 4)
+    if (magic_result == X86 && sizeof(char *) != 4)
     {
         return false;
     }
@@ -129,6 +129,7 @@ Elf_File *parse_elf(File_Info *fi)
     {
         return false;
     }
+
     fd = open(fi->location, O_RDONLY);
     if (fd < 0)
     {
@@ -148,6 +149,14 @@ Elf_File *parse_elf(File_Info *fi)
     file->fi = fi;
     file->dynamic_size = 0;
     file->header = elf_header(file->address);
+
+    if (file->header->e_ident[EI_DATA] == ELFDATA2MSB && magic_result == X64)
+    {
+        // TODO: Support 64 bit elf's with most significant bit first
+        close_elf(file, fi);
+        return NULL;
+    }
+
     file->sections = elf_sheader(file->address);
     if (file->sections == NULL)
     {
@@ -160,24 +169,21 @@ Elf_File *parse_elf(File_Info *fi)
         close_elf(file, fi);
         return NULL;
     }
+
+    // Not all ELF files have a dynamic sections
     file->dynamic_strings = elf_dynamic_strings_offset(file);
-    if (file->dynamic_strings == 0)
-    {
-        close_elf(file, fi);
-        return NULL;
-    }
     file->dynamic_header = get_dynamic_sections_program_header(file);
-    if (file->dynamic_header == NULL)
-    {
-        close_elf(file, fi);
-        return NULL;
-    }
 
     return file;
 }
 
 Tag_Array *search_dynamic_for_value(Elf_File *file, Tag tag)
 {
+    if (file->dynamic_strings == 0 || file->dynamic_header == NULL)
+    {
+        return NULL;
+    }
+
     int number_of_elements = 0;
     int number_of_findings = 0;
     Elf_Internal_Dyn *entry = file->dynamic_header->p_offset + file->address;
@@ -279,6 +285,11 @@ static Elf_Off elf_dynamic_strings_offset(Elf_File *file)
 
 static Elf_Phdr *get_dynamic_sections_program_header(Elf_File *file)
 {
+    if (file->header == NULL || file->program_headers == NULL)
+    {
+        return NULL;
+    }
+
     for (int i = 0; i < file->header->e_phnum; i++)
     {
         if (file->program_headers[i].p_type == PT_DYNAMIC)

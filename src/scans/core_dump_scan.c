@@ -43,8 +43,8 @@ int core_dump_scan(File_Info *fi, All_Results *ar, Args *cmdline)
     int arch = has_elf_magic_bytes(fi);
     if (
         (arch == 0) ||
-        (arch == 1 && sizeof(char *) != 4) ||
-        (arch == 2 && sizeof(char *) != 8))
+        (arch == X86 && sizeof(char *) != 4) ||
+        (arch == X64 && sizeof(char *) != 8))
     {
         return findings;
     }
