@@ -3,6 +3,7 @@
 #include "main.h"
 
 #include <stdbool.h>
+#include <pthread.h>
 
 #define HIGH 3
 #define MEDIUM 2
@@ -38,6 +39,7 @@ typedef struct All_Results
     Result *info_end_node;
 
     int gui_requires_refresh;
+    pthread_mutex_t mutex;
 } All_Results;
 
 All_Results *initilize_total_results();

@@ -329,6 +329,7 @@ static void log_issue_to_screen(Result *new_result, char *category)
 // then swap it with the new result. Updates the saved end nodes.
 static void add_new_issue(Result *new_result, All_Results *all_results, int category)
 {
+    pthread_mutex_lock(&all_results->mutex);
     struct Result *old_head, *old_ptr;
     switch (category)
     {
@@ -407,6 +408,7 @@ static void add_new_issue(Result *new_result, All_Results *all_results, int cate
         puts("Programming error, category was not found");
         printf("Category -> %i\n", category);
     }
+    pthread_mutex_unlock(&all_results->mutex);
 }
 
 int get_results_total(All_Results *result)

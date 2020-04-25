@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdbool.h>
+#include <thpool.h>
 
 #define MAXSIZE 2048
 
@@ -11,4 +12,6 @@ typedef struct Args
     char walk_dir[MAXSIZE + 1];
     bool enabled_full_scans;
     bool enabled_ncurses;
+    int fs_threads;
+    threadpool fs_threadpool;
 } Args;

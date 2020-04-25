@@ -63,6 +63,7 @@ void help()
     puts(" -o <loc>     Save results to location");
     puts(" -i <loc>     Ignore files in this directory (usefull for network shares)");
     puts(" -w <loc>     Only walk files in this directory (usefull for devlopment)");
+    puts(" -t <num>     Threads (default 4)");
     puts(" -f           Run full scans");
     puts(" -n           Enabled ncurses");
     puts(" -h           Show help");
@@ -120,12 +121,15 @@ void *handle_user_input(void *user_input_args)
 int main(int argc, char *argv[])
 {
     int opt;
+    int userinput_threads = 0;
 
     struct Args *args = (struct Args *)malloc(sizeof(struct Args));
     args->save_location[0] = '\0';
+    args->ignore_scan_dir[0] = '\0';
     args->walk_dir[0] = '/';
     args->enabled_full_scans = false;
     args->enabled_ncurses = false;
+    args->fs_threads = 4;
 
     struct Ncurses_Layout nlayout = {
         .logo = NULL,
@@ -141,7 +145,7 @@ int main(int argc, char *argv[])
 
     signal(SIGINT, sigint_handler);
 
-    while ((opt = getopt(argc, argv, "fhno:i:w:")) != -1)
+    while ((opt = getopt(argc, argv, "fhno:i:w:t:")) != -1)
     {
         switch (opt)
         {
@@ -163,6 +167,16 @@ int main(int argc, char *argv[])
             break;
         case 'w':
             strncpy(args->walk_dir, optarg, MAXSIZE);
+            break;
+        case 't':
+            userinput_threads = atoi(optarg);
+            if (userinput_threads == 0)
+            {
+                banner();
+                printf("\nPlease enter a valid thread number\n");
+                exit(EXIT_FAILURE);
+            }
+            args->fs_threads = userinput_threads;
             break;
         case 'n':
             args->enabled_ncurses = true;

@@ -8,20 +8,32 @@
 #include "utils.h"
 #include "results.h"
 #include "scan.h"
+#include "thpool.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <string.h>
 #include <errno.h>
+#include <unistd.h>
 #include <dirent.h>
 #include <limits.h>
 #include <ctype.h>
 
+pthread_mutex_t FILES_SCANNED_MUTEX;
 int FILES_SCANNED = 0;
 
+typedef struct Thread_Pool_Args
+{
+    char file_location[MAXSIZE];
+    char file_name[MAXSIZE];
+    All_Results *all_results;
+    Args *cmdline;
+} Thread_Pool_Args;
+
 static void get_file_extension(char *buf, char *f_name);
-static void scan_file_for_issues(char *file_location, char *file_name, All_Results *all_results, Args *cmdline);
+static void scan_file_for_issues(Thread_Pool_Args *thread_pool_args);
+static void add_file_to_thread_pool(char *file_location, char *file_name, All_Results *all_results, Args *cmdline);
 
 int get_number_of_files_scanned()
 {
@@ -50,7 +62,7 @@ void walk_file_system(char *entry_location, All_Results *all_results, Args *cmdl
             {
                 strcpy(file_location, entry_location);
                 strcat(file_location, entry->d_name);
-                scan_file_for_issues(file_location, entry->d_name, all_results, cmdline);
+                add_file_to_thread_pool(file_location, entry->d_name, all_results, cmdline);
             }
             if (entry->d_type & DT_DIR)
             {
@@ -72,7 +84,29 @@ void walk_file_system(char *entry_location, All_Results *all_results, Args *cmdl
     closedir(dir);
 }
 
-static void scan_file_for_issues(char *file_location, char *file_name, All_Results *all_results, Args *cmdline)
+static void add_file_to_thread_pool(char *file_location, char *file_name, All_Results *all_results, Args *cmdline)
+{
+    Thread_Pool_Args *args = malloc(sizeof(Thread_Pool_Args));
+
+    if (args == NULL)
+    {
+        out_of_memory_err();
+    }
+
+    strncpy(args->file_location, file_location, MAXSIZE - 1);
+    strncpy(args->file_name, file_name, MAXSIZE - 1);
+    args->all_results = all_results;
+    args->cmdline = cmdline;
+
+    while (thpool_jobqueue_length(cmdline->fs_threadpool) > cmdline->fs_threads * 2)
+    {
+        usleep(20);
+    }
+
+    thpool_add_work(cmdline->fs_threadpool, (void *)scan_file_for_issues, (void *)args);
+}
+
+static void scan_file_for_issues(Thread_Pool_Args *thread_pool_args)
 {
     struct File_Info *new_file = (File_Info *)malloc(sizeof(File_Info));
     struct stat *stat_buf = malloc(sizeof(struct stat));
@@ -83,11 +117,11 @@ static void scan_file_for_issues(char *file_location, char *file_name, All_Resul
         out_of_memory_err();
     }
 
-    strcpy(new_file->location, file_location);
-    strcpy(new_file->name, file_name);
-    get_file_extension(new_file->extension, file_location);
+    strcpy(new_file->location, thread_pool_args->file_location);
+    strcpy(new_file->name, thread_pool_args->file_name);
+    get_file_extension(new_file->extension, thread_pool_args->file_location);
 
-    if (lstat(file_location, stat_buf) == 0)
+    if (lstat(thread_pool_args->file_location, stat_buf) == 0)
     {
         new_file->stat = stat_buf;
     }
@@ -106,13 +140,13 @@ static void scan_file_for_issues(char *file_location, char *file_name, All_Resul
         return;
     }
 
-    FILES_SCANNED++;
-    findings += suid_bit_scan(new_file, all_results, cmdline);
-    findings += guid_bit_scan(new_file, all_results, cmdline);
-    findings += capabilities_scan(new_file, all_results, cmdline);
-    findings += intresting_files_scan(new_file, all_results, cmdline);
-    findings += core_dump_scan(new_file, all_results, cmdline);
-    findings += rpath_scan(new_file, all_results, cmdline);
+    // printf("Scanning file -> %s\n", thread_pool_args->file_location);
+    findings += suid_bit_scan(new_file, thread_pool_args->all_results, thread_pool_args->cmdline);
+    findings += guid_bit_scan(new_file, thread_pool_args->all_results, thread_pool_args->cmdline);
+    findings += capabilities_scan(new_file, thread_pool_args->all_results, thread_pool_args->cmdline);
+    findings += intresting_files_scan(new_file, thread_pool_args->all_results, thread_pool_args->cmdline);
+    findings += core_dump_scan(new_file, thread_pool_args->all_results, thread_pool_args->cmdline);
+    findings += rpath_scan(new_file, thread_pool_args->all_results, thread_pool_args->cmdline);
 
     if (findings > 1)
     {
@@ -120,6 +154,11 @@ static void scan_file_for_issues(char *file_location, char *file_name, All_Resul
     }
     free(stat_buf);
     free(new_file);
+    free(thread_pool_args);
+
+    pthread_mutex_lock(&FILES_SCANNED_MUTEX);
+    FILES_SCANNED++;
+    pthread_mutex_unlock(&FILES_SCANNED_MUTEX);
 }
 
 // Get the file extension the "." is not saved and an extension

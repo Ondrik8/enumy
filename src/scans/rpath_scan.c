@@ -9,7 +9,7 @@
     the run paths (DT_RPATH and DT_RUNPATH) are used to find libaries needed similar to 
     the $PATH variable for finding executables. The precedence is the following: 
 
-    1. DR_RPATH
+    1. DT_RPATH
     2. LD_LIBRARY_PATH
     3. DT_RUNPATH 
 
@@ -22,6 +22,11 @@
 
     This scan is slow because we have to parse millions of files so it's only enabled in 
     the full scan option
+
+    Note DT_RPATH and DT_RUNPATH can be tokenized with semicolons e.g
+    DT_RUNPATH:-> $ORIGIN/../../lib
+
+    The $ORIGIN value means replace with the binaries current directory 
 */
 
 #include "fs.h"
@@ -124,33 +129,33 @@ static int test_missing_shared_libaries(Lib_Info *lib_info)
         return findings;
     }
 
-    printf("---------------------------------------------------\n");
-    printf("DT_NEEDED:");
-    for (int i = 0; i < lib_info->dt_needed[0].size; i++)
-    {
-        printf("-> %s", lib_info->dt_needed[i].tag_value);
-    }
+    // printf("---------------------------------------------------\n");
+    // printf("DT_NEEDED:");
+    // for (int i = 0; i < lib_info->dt_needed[0].size; i++)
+    // {
+    //     printf("-> %s", lib_info->dt_needed[i].tag_value);
+    // }
 
-    if (lib_info->dt_runpath != NULL)
-    {
-        printf("\n");
-        printf("DT_RUNPATH:");
-        for (int i = 0; i < lib_info->dt_runpath[0].size; i++)
-        {
-            printf("-> %s", lib_info->dt_runpath[i].tag_value);
-        }
-    }
-    if (lib_info->dt_rpath != NULL)
-    {
-        printf("\n");
-        printf("DT_RPATH:");
-        for (int i = 0; i < lib_info->dt_rpath[0].size; i++)
-        {
-            printf("-> %s", lib_info->dt_rpath[i].tag_value);
-        }
-    }
-    printf("\n");
-    printf("---------------------------------------------------\n");
+    // if (lib_info->dt_runpath != NULL)
+    // {
+    //     printf("\n");
+    //     printf("DT_RUNPATH:");
+    //     for (int i = 0; i < lib_info->dt_runpath[0].size; i++)
+    //     {
+    //         printf("-> %s", lib_info->dt_runpath[i].tag_value);
+    //     }
+    // }
+    // if (lib_info->dt_rpath != NULL)
+    // {
+    //     printf("\n");
+    //     printf("DT_RPATH:");
+    //     for (int i = 0; i < lib_info->dt_rpath[0].size; i++)
+    //     {
+    //         printf("-> %s", lib_info->dt_rpath[i].tag_value);
+    //     }
+    // }
+    // printf("\n");
+    // printf("---------------------------------------------------\n");
     return findings;
 }
 

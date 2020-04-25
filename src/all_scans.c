@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <thpool.h>
 #include <stdbool.h>
 
 typedef struct Walk_Args
@@ -29,9 +30,12 @@ static void *create_walk_thread(void *args)
     All_Results *all_results = arguments->all_results;
     char *walk_path = arguments->walk_path;
     Args *cmdline = arguments->cmdline;
+    cmdline->fs_threadpool = thpool_init(cmdline->fs_threads);
 
     walk_file_system(walk_path, all_results, cmdline);
 
+    puts("Closing threadpool");
+    thpool_destroy(cmdline->fs_threadpool);
     return NULL;
 }
 

@@ -274,6 +274,8 @@ static int search_conf_for_pass(File_Info *fi, All_Results *ar, Args *cmdline)
     unsigned char *f_data, *f_data_end;
     unsigned char *line_begin, *line_end;
 
+    return findings;
+
     if (fi->stat->st_size == 0 || (fd = open(fi->location, O_RDONLY) == -1))
     {
         return findings;
