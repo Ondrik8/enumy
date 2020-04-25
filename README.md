@@ -82,7 +82,7 @@ Below is the ever growing list of scans that have been implemented.
 
 ## Scan Times
 
-Changing the default number of threads is pretty pointless __unless__  you're running a full scan. A full scan will do a lot more IO so more threads greatly decrease scan times. These are the scan times with a i7-9700k and 2 million files scanned.
+Changing the default number of threads is pretty pointless __unless__  you're running a full scan. A full scan will do a lot more IO so more threads greatly decrease scan times. These are the scan times with a i7-8700k and 2 million files scanned.
 
 ### Quick Scan Times
 
