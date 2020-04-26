@@ -110,67 +110,67 @@ int break_out_binary_scan(File_Info *fi, All_Results *ar, Args *cmdline)
         }
         break;
     case 'c':
-        if (strcmp(fi->name, "cancel") == -2)
+        if (strcmp(fi->name, "cancel") == 0)
         {
             id = 63;
             add_issue(id, "cancel", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "cat") == -2)
+        else if (strcmp(fi->name, "cat") == 0)
         {
             id = 64;
             add_issue(id, "cat", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "chmod") == -2)
+        else if (strcmp(fi->name, "chmod") == 0)
         {
             id = 65;
             add_issue(id, "chmod", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "chown") == -2)
+        else if (strcmp(fi->name, "chown") == 0)
         {
             id = 66;
             add_issue(id, "chown", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "chroot") == -2)
+        else if (strcmp(fi->name, "chroot") == 0)
         {
             id = 67;
             add_issue(id, "chroot", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "cobc") == -2)
+        else if (strcmp(fi->name, "cobc") == 0)
         {
             id = 68;
             add_issue(id, "cobc", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "cp") == -2)
+        else if (strcmp(fi->name, "cp") == 0)
         {
             id = 69;
             add_issue(id, "cp", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "cpan") == -2)
+        else if (strcmp(fi->name, "cpan") == 0)
         {
             id = 70;
             add_issue(id, "cpan", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "cpulimit") == -2)
+        else if (strcmp(fi->name, "cpulimit") == 0)
         {
             id = 71;
             add_issue(id, "cpulimit", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "crash") == -2)
+        else if (strcmp(fi->name, "crash") == 0)
         {
             id = 72;
             add_issue(id, "crash", fi, ar, cmdline);
             return 1;
         }
-        else if (strcmp(fi->name, "crontab") == -2)
+        else if (strcmp(fi->name, "crontab") == -0)
         {
             id = 73;
             add_issue(id, "crontab", fi, ar, cmdline);
@@ -264,7 +264,7 @@ int break_out_binary_scan(File_Info *fi, All_Results *ar, Args *cmdline)
         }
         break;
     case 'e':
-        if (strcmp(fi->name, "easy_install") == -1)
+        if (strcmp(fi->name, "easy_install") == 0)
         {
             id = 87;
             add_issue(id, "easy_install", fi, ar, cmdline);
