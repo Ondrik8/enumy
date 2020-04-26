@@ -305,6 +305,7 @@ static void setup_id(WINDOW *id_window)
 
     mvwprintw(id_window, 1, 1, "-> %s <-", id_summary);
     wrefresh(id_window);
+    pclose(fp);
 }
 
 static void *update_gui(void *gui_args)

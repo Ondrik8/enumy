@@ -44,7 +44,7 @@ void walk_file_system(char *entry_location, All_Results *all_results, Args *cmdl
 {
     DIR *dir;
     struct dirent *entry;
-    char file_location[MAX_FILE_SIZE];
+    char file_location[MAXSIZE];
 
     file_location[0] = '\0';
 
@@ -62,13 +62,13 @@ void walk_file_system(char *entry_location, All_Results *all_results, Args *cmdl
 
             if (entry->d_type & DT_REG)
             {
-                strcpy(file_location, entry_location);
+                strncpy(file_location, entry_location, MAXSIZE - 1);
                 strcat(file_location, entry->d_name);
                 add_file_to_thread_pool(file_location, entry->d_name, all_results, cmdline);
             }
             if (entry->d_type & DT_DIR)
             {
-                strcpy(file_location, entry_location);
+                strncpy(file_location, entry_location, MAXSIZE - 1);
                 strcat(file_location, entry->d_name);
                 if (strcmp(cmdline->ignore_scan_dir, file_location) == 0)
                 {
@@ -119,8 +119,8 @@ static void scan_file_for_issues(Thread_Pool_Args *thread_pool_args)
         out_of_memory_err();
     }
 
-    strcpy(new_file->location, thread_pool_args->file_location);
-    strcpy(new_file->name, thread_pool_args->file_name);
+    strncpy(new_file->location, thread_pool_args->file_location, sizeof(new_file->location) - 1);
+    strncpy(new_file->name, thread_pool_args->file_name, sizeof(new_file->location) - 1);
     get_file_extension(new_file->extension, thread_pool_args->file_location);
 
     if (lstat(thread_pool_args->file_location, stat_buf) == 0)

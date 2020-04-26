@@ -219,16 +219,33 @@ static double caclulate_file_entropy(char *file_location)
     char str[ENTROPY_SIZE];
     unsigned char current_pos;
     unsigned int len, *hist, histlen, i;
+    int current_fget;
     FILE *f;
     int wherechar[256];
     double entropy = 0;
 
     f = fopen(file_location, "r");
     for (len = 0; !feof(f) && len < ENTROPY_SIZE; len++)
-        str[len] = (unsigned char)fgetc(f);
+    {
+        current_fget = fgetc(f);
+        if (current_fget == EOF)
+        {
+            break;
+        }
+        str[len] = (unsigned char)current_fget;
+    }
 
     fclose(f);
-    str[--len] = '\0';
+
+    // Check for integer underflow
+    if (len == 0)
+    {
+        str[0] = '\0';
+    }
+    else
+    {
+        str[--len] = '\0';
+    }
 
     hist = (unsigned int *)calloc(len, sizeof(int));
     if (hist == NULL)
@@ -276,64 +293,64 @@ static int search_conf_for_pass(File_Info *fi, All_Results *ar, Args *cmdline)
 
     return findings;
 
-    if (fi->stat->st_size == 0 || (fd = open(fi->location, O_RDONLY) == -1))
-    {
-        return findings;
-    }
+    // if (fi->stat->st_size == 0 || (fd = open(fi->location, O_RDONLY) == -1))
+    // {
+    //     return findings;
+    // }
 
-    f_data = mmap(0, fi->stat->st_size, PROT_READ, MAP_SHARED, fd, 0);
-    if (f_data == MAP_FAILED)
-    {
-        close(fd);
-        return findings;
-    }
+    // f_data = mmap(0, fi->stat->st_size, PROT_READ, MAP_SHARED, fd, 0);
+    // if (f_data == MAP_FAILED)
+    // {
+    //     close(fd);
+    //     return findings;
+    // }
 
-    f_data_end = f_data + fi->stat->st_size;
-    line_begin = line_end = f_data;
+    // f_data_end = f_data + fi->stat->st_size;
+    // line_begin = line_end = f_data;
 
-    while (true)
-    {
-        // Itterate until we find a new line or EOF
-        while ((line_end < f_data_end) && ((*line_end != '\n') || (*line_end != '\r') || (*line_end != 0x0a)))
-        {
-            if (line_end - line_begin >= 3)
-            {
-                if (
-                    ((unsigned char)*line_end == 0xe2) &&
-                    ((unsigned char)*line_end - 1 == 0x90) &&
-                    ((unsigned char)*line_end - 2 == 0xa4))
-                {
-                    break; // utf8 new line
-                }
-            }
-            line_end++;
-        }
-        if (search_line(line_begin, line_end))
-        {
-            int id = 47;
-            char *name = "Config could contain passwords";
-            Result *new_result = create_new_issue();
-            set_id_and_desc(id, new_result);
-            set_issue_location(fi->location, new_result);
-            set_issue_name(name, new_result);
-            add_new_result_info(new_result, ar, cmdline);
-            findings++;
-            break;
-        }
-        if (line_end == f_data_end)
-        {
-            break;
-        }
-        else
-        {
-            line_end++;
-            line_begin = line_end;
-        }
-    }
+    // while (true)
+    // {
+    //     // Itterate until we find a new line or EOF
+    //     while ((line_end < f_data_end) && (*line_end && '\n') && (*line_end != '\r') && (*line_end != 0x0a))
+    //     {
+    //         if (line_end - line_begin >= 3)
+    //         {
+    //             if (
+    //                 ((unsigned char)*line_end == 0xe2) &&
+    //                 ((unsigned char)*line_end - 1 == 0x90) &&
+    //                 ((unsigned char)*line_end - 2 == 0xa4))
+    //             {
+    //                 break; // utf8 new line
+    //             }
+    //         }
+    //         line_end++;
+    //     }
+    //     if (search_line(line_begin, line_end))
+    //     {
+    //         int id = 47;
+    //         char *name = "Config could contain passwords";
+    //         Result *new_result = create_new_issue();
+    //         set_id_and_desc(id, new_result);
+    //         set_issue_location(fi->location, new_result);
+    //         set_issue_name(name, new_result);
+    //         add_new_result_info(new_result, ar, cmdline);
+    //         findings++;
+    //         break;
+    //     }
+    //     if (line_end == f_data_end)
+    //     {
+    //         break;
+    //     }
+    //     else
+    //     {
+    //         line_end++;
+    //         line_begin = line_end;
+    //     }
+    // }
 
-    close(fd);
-    munmap((void *)f_data, fi->stat->st_size);
-    return findings;
+    // close(fd);
+    // munmap((void *)f_data, fi->stat->st_size);
+    // return findings;
 }
 
 static int search_line(unsigned char *line_start, unsigned char *line_end)

@@ -76,6 +76,7 @@ All_Results *initilize_total_results()
     {
         free(all_results->high);
         free(all_results->medium);
+        out_of_memory_err();
     }
     all_results->info = (struct Result *)malloc(sizeof(struct Result));
     if (all_results->info == NULL)
@@ -83,6 +84,7 @@ All_Results *initilize_total_results()
         free(all_results->high);
         free(all_results->medium);
         free(all_results->low);
+        out_of_memory_err();
     }
 
     all_results->high_end_node = all_results->high;
@@ -115,15 +117,27 @@ All_Results *initilize_total_results()
 
 void free_total_results(All_Results *ar)
 {
-    free_linked_list(ar->high);
-    free_linked_list(ar->medium);
-    free_linked_list(ar->low);
-    free_linked_list(ar->info);
-
-    if (ar != NULL)
+    if (ar == NULL)
     {
-        free(ar);
+        return;
     }
+    if (ar->high != NULL)
+    {
+        free_linked_list(ar->high);
+    }
+    if (ar->medium != NULL)
+    {
+        free_linked_list(ar->medium);
+    }
+    if (ar->low != NULL)
+    {
+        free_linked_list(ar->low);
+    }
+    if (ar->info != NULL)
+    {
+        free_linked_list(ar->info);
+    }
+    free(ar);
 }
 
 // Creates a base issue with default values
@@ -175,25 +189,25 @@ void set_id_and_desc(int issue_id, Result *result_node)
 // Set issue name for the base issue
 void set_issue_name(char *issue_name, Result *result_node)
 {
-    strncpy(result_node->issue_name, issue_name, sizeof(result_node->issue_name));
+    strncpy(result_node->issue_name, issue_name, MAXSIZE - 1);
 }
 
 // Set issue description for the base issue
 void set_issue_description(char *issue_description, Result *result_node)
 {
-    strncpy(result_node->description, issue_description, sizeof(result_node->description));
+    strncpy(result_node->description, issue_description, MAXSIZE - 1);
 }
 
 // Set issue location for the base issue
 void set_issue_location(char *issue_location, Result *result_node)
 {
-    strncpy(result_node->location, issue_location, sizeof(result_node->location));
+    strncpy(result_node->location, issue_location, MAXSIZE - 1);
 }
 
 // Set the optional other info
-void set_other_info(char *other_info, Result *result_nodee)
+void set_other_info(char *other_info, Result *result_node)
 {
-    strncpy(result_nodee->other_info, other_info, sizeof(result_nodee->other_info));
+    strncpy(result_node->other_info, other_info, MAXSIZE - 1);
 }
 
 // Adds a new fully completed issue to the High linked list

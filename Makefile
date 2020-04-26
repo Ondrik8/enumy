@@ -21,13 +21,13 @@ CFLAGS := -W
 all: $(EXE)
 
 $(EXE): $(OBJ) $(OBJ_SCAN)
-	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@ -lncursesw -lpthread $(STATIC) $(ARCH) 
+	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@ -lncursesw -lpthread $(STATIC) $(ARCH) -g
 
 $(EXE_SCAN): $(OBJ_SCAN)
-	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@ -lncursesw -lpthread $(STATIC) $(ARCH) 
+	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@ -lncursesw -lpthread $(STATIC) $(ARCH) -g
 	
 $(OBJ_SCAN_DIR)/%.o: $(SCAN_DIR)/%.c | $(OBJ_SCAN_DIR)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@ -lncursesw -lpthread $(STATIC) $(ARCH) 
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@ -lncursesw -lpthread $(STATIC) $(ARCH) -g
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@ -lncursesw -lpthread $(STATIC) $(ARCH) -g -pg
@@ -44,7 +44,7 @@ cov:
 	make clean 
 	cov-build --dir cov-int make 
 	tar czvf enumy-cov.tgz cov-int
-	echo curl --form token=`cat cov-token` \
+	curl --form token=`cat cov-token` \
 	--form email=`cat email` \
 	--form file=@enumy-cov.tgz\
 	--form version="Version" \
