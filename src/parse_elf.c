@@ -179,6 +179,7 @@ bool elf_parse_dynamic_sections(Elf_File *file)
     // Not all ELF files have a dynamic sections
     file->dynamic_strings = elf_dynamic_strings_offset(file);
     file->dynamic_header = get_dynamic_sections_program_header(file);
+    return file->dynamic_header = 0;
 }
 
 Tag_Array *search_dynamic_for_value(Elf_File *file, Tag tag)

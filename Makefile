@@ -50,3 +50,10 @@ cov:
 	--form version="Version" \
 	--form description="Description" \
 	https://scan.coverity.com/builds?project=luke-goddard%2Fenumy
+
+.PHONY: asci
+
+ascii: 
+	make clean 
+	make 
+	termtosvg docs/svg/example.svg -c "./enumy -t 8"

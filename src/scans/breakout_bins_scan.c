@@ -506,6 +506,9 @@ int break_out_binary_scan(File_Info *fi, All_Results *ar, Args *cmdline)
     case 'k':
         if (strcmp(fi->name, "ksh") == 0)
         {
+            id = 126;
+            add_issue(id, "ksh", fi, ar, cmdline);
+            return 1;
         }
         else if (strcmp(fi->name, "kshksshell") == 0)
         {

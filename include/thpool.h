@@ -1,3 +1,5 @@
+#pragma once
+
 /**********************************
  * @author      Johan Hanssen Seferidis
  * License:     MIT
