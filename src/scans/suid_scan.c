@@ -65,7 +65,6 @@ char *KNOW_GOOD_SUID[] = {
     "VBoxNetAdpCtl",
     "vmware-vmx",
     "VirtualBoxVM",
-
 };
 
 int suid_bit_scan(File_Info *fi, All_Results *ar, Args *cmdline);
@@ -77,6 +76,14 @@ static bool has_suid_and_group_write(File_Info *fi, All_Results *ar, Args *cmdli
 static bool has_guid_and_global_write(File_Info *fi, All_Results *ar, Args *cmdline);
 static bool has_guid_and_group_write(File_Info *fi, All_Results *ar, Args *cmdline);
 
+/**
+ * Tests to see if the file is a SUID file. If it's then it kicks of various 
+ * SUID file scans such as breakout binaries and permissions checks
+ * @param fi A struct containing the files information 
+ * @param ar a struct containing all of the results that enumy has previously found
+ * @param cmdline A struct containing the runtime arguments for enumy 
+ * @return the number of issues found
+ */
 int suid_bit_scan(File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int findings = 0;
@@ -112,6 +119,14 @@ int suid_bit_scan(File_Info *fi, All_Results *ar, Args *cmdline)
     return findings;
 }
 
+/**
+ * Tests to see if the file is a SUID file. If it's then it kicks of various 
+ * GUID file scans such as breakout binaries and permissions checks
+ * @param fi A struct containing the files information 
+ * @param ar a struct containing all of the results that enumy has previously found
+ * @param cmdline A struct containing the runtime arguments for enumy 
+ * @return the number of issues found
+ */
 int guid_bit_scan(File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int findings = 0;
@@ -146,6 +161,11 @@ int guid_bit_scan(File_Info *fi, All_Results *ar, Args *cmdline)
     return findings;
 }
 
+/**
+ * Tests to see if the current file is a standard SUID file
+ * @param fi A struct containing the files information 
+ * @return true if the SUID file matches a whitelist of known 'ok' suid files
+ */
 static bool has_normal_suid_name(File_Info *fi)
 {
     int size = sizeof KNOW_GOOD_SUID / sizeof KNOW_GOOD_SUID[0];
@@ -159,6 +179,13 @@ static bool has_normal_suid_name(File_Info *fi)
     return false;
 }
 
+/**
+ * Tests to see if the SUID file has global write
+ * @param fi A struct containing the files information 
+ * @param ar a struct containing all of the results that enumy has previously found
+ * @param cmdline A struct containing the runtime arguments for enumy 
+ * @return true if it does
+ */
 static bool has_suid_and_global_write(File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 2;
@@ -179,6 +206,13 @@ static bool has_suid_and_global_write(File_Info *fi, All_Results *ar, Args *cmdl
     return true;
 }
 
+/**
+ * Tests to see if the GUID file has global write
+ * @param fi A struct containing the files information 
+ * @param ar a struct containing all of the results that enumy has previously found
+ * @param cmdline A struct containing the runtime arguments for enumy 
+ * @return true if the file has group write
+ */
 static bool has_suid_and_group_write(File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 3;
@@ -199,6 +233,13 @@ static bool has_suid_and_group_write(File_Info *fi, All_Results *ar, Args *cmdli
     return true;
 }
 
+/**
+ * Tests to see if the GUID file has group write
+ * @param fi A struct containing the files information 
+ * @param ar a struct containing all of the results that enumy has previously found
+ * @param cmdline A struct containing the runtime arguments for enumy 
+ * @return true if the file has global write enabled
+ */
 static bool has_guid_and_global_write(File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 5;
@@ -219,6 +260,13 @@ static bool has_guid_and_global_write(File_Info *fi, All_Results *ar, Args *cmdl
     return true;
 }
 
+/**
+ * Test to see if the GUID file has group write
+ * @param fi A struct containing the files information 
+ * @param ar a struct containing all of the results that enumy has previously found
+ * @param cmdline A struct containing the runtime arguments for enumy 
+ * @return true if the file has group write enabled
+ */
 static bool has_guid_and_group_write(File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 6;

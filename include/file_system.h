@@ -44,3 +44,5 @@ int get_number_of_files_scanned();
 Vector *find_shared_libs();
 bool test_if_standard_shared_object(Vector *shared_libs, char *new_shared_lib);
 void free_shared_libs(Vector *v);
+char *get_file_name(char *full_path);
+char *get_dir_name(char *full_path);

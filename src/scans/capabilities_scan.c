@@ -81,6 +81,14 @@ static bool check_syslog(cap_t caps_for_file, File_Info *fi, All_Results *ar, Ar
 static int check_cap(cap_t caps_for_file, cap_value_t search);
 static void set_other_info_to_cap_flag(cap_flag_t flag, Result *new_result);
 
+/**
+ * given a file with it's information in fi, this function will test to see if
+ * that file has any special linux capabilities that could be abused 
+ * @param fi The current files information 
+ * @param ar A structure containing all of the results that enumy has found 
+ * @param cmdline the runtime arguments 
+ * @return The number of capabilites that the file has 
+ */
 int capabilities_scan(File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int findings = 0;
@@ -146,8 +154,14 @@ int capabilities_scan(File_Info *fi, All_Results *ar, Args *cmdline)
     return findings;
 }
 
-//CAP_AUDIT_CONTROL (since Linux 2.6.11)
-//Enable and disable kernel auditing change auditing filter rules; retrieve auditing status and filtering rules.
+/**
+ * CAP_AUDIT_CONTROL (since Linux 2.6.11)
+ * Enable and disable kernel auditing change auditing filter rules; retrieve auditing status and filtering rules.a
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_audit_control(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 7;
@@ -166,8 +180,14 @@ static bool check_audit_control(cap_t caps_for_file, File_Info *fi, All_Results 
     return true;
 }
 
-//CAP_AUDIT_READ(since Linux 3.16)
-//Allow reading the audit log via a multicast netlink socket.
+/**
+ * CAP_AUDIT_READ(since Linux 3.16)
+ * Allow reading the audit log via a multicast netlink socket.a
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_audit_read(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 8;
@@ -186,8 +206,14 @@ static bool check_audit_read(cap_t caps_for_file, File_Info *fi, All_Results *ar
     return true;
 }
 
-// CAP_AUDIT_WRITE(since Linux 2.6.11)
-// Write records to kernel auditing log.
+/**
+ *  CAP_AUDIT_WRITE(since Linux 2.6.11)
+ *  Write records to kernel auditing log.a
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_audit_write(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 9;
@@ -206,9 +232,15 @@ static bool check_audit_write(cap_t caps_for_file, File_Info *fi, All_Results *a
     return true;
 }
 
-// CAP_BLOCK_SUSPEND(since Linux 3.5)
-// Employ features that can block system suspend(epoll(7)
-// EPOLLWAKEUP, /proc/sys/wake_lock).
+/**
+ * CAP_BLOCK_SUSPEND(since Linux 3.5)
+ * Employ features that can block system suspend(epoll(7)a
+ * EPOLLWAKEUP, /proc/sys/wake_lock).
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_block_suspend(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 10;
@@ -227,8 +259,14 @@ static bool check_block_suspend(cap_t caps_for_file, File_Info *fi, All_Results 
     return true;
 }
 
-// CAP_CHOWN
-// Make arbitrary changes to file UIDs and GID
+/**
+ *  CAP_CHOWN
+ *  Make arbitrary changes to file UIDs and GIDa
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_chown(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 11;
@@ -247,8 +285,14 @@ static bool check_chown(cap_t caps_for_file, File_Info *fi, All_Results *ar, Arg
     return true;
 }
 
-// CAP_DAC_OVERRIDE
-// Bypass file read, write, and execute permission checks.
+/**
+ *  CAP_DAC_OVERRIDE
+ *  Bypass file read, write, and execute permission checks.a
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_dac_bypass(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 12;
@@ -267,11 +311,16 @@ static bool check_dac_bypass(cap_t caps_for_file, File_Info *fi, All_Results *ar
     return true;
 }
 
-// CAP_DAC_READ_SEARCH
-// *Bypass file read permission checks and directory read and
-//     execute permission checks;
-// *invoke open_by_handle_at(2);
-// *use the linkat(2) AT_EMPTY_PATH flag to create a link to a file refred at fd
+/**
+ *  CAP_DAC_READ_SEARCH
+ *  *Bypass file read permission checks and directory read and execute permission checks;
+ * invoke open_by_handle_at(2);
+ * use the linkat(2) AT_EMPTY_PATH flag to create a link to a file refred at fd
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_dac_read_search(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 13;
@@ -290,10 +339,14 @@ static bool check_dac_read_search(cap_t caps_for_file, File_Info *fi, All_Result
     return true;
 }
 
-// CAP_FOWNER
-// Bypass permissions checks on operations that requrire UID
-// Set inodes and ACLS
-// Ignore sticky bits
+/**
+ *  CAP_FOWNER
+ *  Bypass permissions checks on operations that requrire UID inodes and ACLS Ignore sticky bitsa
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_fowner(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 14;
@@ -312,8 +365,14 @@ static bool check_fowner(cap_t caps_for_file, File_Info *fi, All_Results *ar, Ar
     return true;
 }
 
-// CAP_FSETID
-// Do not clear SUID/GUID bits on modified files
+/**
+ *  CAP_FSETID
+ *  Do not clear SUID/GUID bits on modified filesa
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_clear_set_id(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 15;
@@ -332,8 +391,14 @@ static bool check_clear_set_id(cap_t caps_for_file, File_Info *fi, All_Results *
     return true;
 }
 
-// CAP_IPC_LOCK
-// Lock memory
+/**
+ *  CAP_IPC_LOCK
+ *  Lock memorya
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_ipc_lock(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 16;
@@ -352,8 +417,14 @@ static bool check_ipc_lock(cap_t caps_for_file, File_Info *fi, All_Results *ar, 
     return true;
 }
 
-// CAP_IPC_OWNER
-// Bypass permission checks for operations on System V IPC objects
+/**
+ *  CAP_IPC_OWNER
+ *  Bypass permission checks for operations on System V IPC objectsa
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_ipc_owner(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 17;
@@ -372,8 +443,14 @@ static bool check_ipc_owner(cap_t caps_for_file, File_Info *fi, All_Results *ar,
     return true;
 }
 
-// CAP_KILL
-// Bypass permisssion checks for ssending signals
+/**
+ *  CAP_KILL
+ *  Bypass permisssion checks for ssending signalsa
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_kill(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 18;
@@ -392,8 +469,14 @@ static bool check_kill(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args
     return true;
 }
 
-// CAP_LEASE
-// Establish leases on arbitrary files
+/**
+ *  CAP_LEASE
+ *  Establish leases on arbitrary filesa
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_lease(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 19;
@@ -412,8 +495,14 @@ static bool check_lease(cap_t caps_for_file, File_Info *fi, All_Results *ar, Arg
     return true;
 }
 
-// CAP_LINUX_IMMUTABLE
-// Set the immutable flag on a file
+/**
+ *  CAP_LINUX_IMMUTABLE
+ *  Set the immutable flag on a filea
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_immutable(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 20;
@@ -432,8 +521,14 @@ static bool check_immutable(cap_t caps_for_file, File_Info *fi, All_Results *ar,
     return true;
 }
 
-// CAP_MAC_ADMIN
-// Change the smack linux security module configuration
+/**
+ *  CAP_MAC_ADMIN
+ *  Change the smack linux security module configurationa
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_mac_admin(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 21;
@@ -452,8 +547,14 @@ static bool check_mac_admin(cap_t caps_for_file, File_Info *fi, All_Results *ar,
     return true;
 }
 
-// CAP_MAC_OVERRIDE
-// Override mandatory access control for Smack LSM
+/**
+ *  CAP_MAC_OVERRIDE
+ *  Override mandatory access control for Smack LSMa
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_mac_override(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 22;
@@ -472,8 +573,14 @@ static bool check_mac_override(cap_t caps_for_file, File_Info *fi, All_Results *
     return true;
 }
 
-// CAP_MKNOD
-// Create special files using mknod
+/**
+ *  CAP_MKNOD
+ *  Create special files using mknoda
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_mknod(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 23;
@@ -492,8 +599,14 @@ static bool check_mknod(cap_t caps_for_file, File_Info *fi, All_Results *ar, Arg
     return true;
 }
 
-// CAP_NET_ADMIN
-// Perform shit tons of powerful networking operations
+/**
+ *  CAP_NET_ADMIN
+ *  Perform shit tons of powerful networking operationsa
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_net_admin(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 24;
@@ -512,8 +625,14 @@ static bool check_net_admin(cap_t caps_for_file, File_Info *fi, All_Results *ar,
     return true;
 }
 
-// CAP_NET_BIND_SERVICE
-// Bind to ports less than 1024
+/**
+ *  CAP_NET_BIND_SERVICE
+ *  Bind to ports less than 1024a
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_net_bind_service(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 25;
@@ -532,8 +651,14 @@ static bool check_net_bind_service(cap_t caps_for_file, File_Info *fi, All_Resul
     return true;
 }
 
-// CAP_NET_BROADCAST
-// Make a socket broadcasts and listen to multicast
+/**
+ *  CAP_NET_BROADCAST
+ *  Make a socket broadcasts and listen to multicasta
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_net_broadcast(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 26;
@@ -552,8 +677,14 @@ static bool check_net_broadcast(cap_t caps_for_file, File_Info *fi, All_Results 
     return true;
 }
 
-// CAP_NET_RAW
-// Use raw and packet sockets, bind to any address for transparent proxy
+/**
+ *  CAP_NET_RAW
+ *  Use raw and packet sockets, bind to any address for transparent proxya
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_net_raw(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 27;
@@ -572,8 +703,14 @@ static bool check_net_raw(cap_t caps_for_file, File_Info *fi, All_Results *ar, A
     return true;
 }
 
-// CAP_SETGID
-// Manipulate GID list
+/**
+ *  CAP_SETGID
+ *  Manipulate GID lista
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_set_gid(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 28;
@@ -592,8 +729,14 @@ static bool check_set_gid(cap_t caps_for_file, File_Info *fi, All_Results *ar, A
     return true;
 }
 
-// CAP_SETFCAP
-// set capablities on files
+/**
+ *  CAP_SETFCAP
+ *  set capablities on filesa
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_set_cap(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 29;
@@ -612,8 +755,14 @@ static bool check_set_cap(cap_t caps_for_file, File_Info *fi, All_Results *ar, A
     return true;
 }
 
-// CAP_SETPCAP
-// Same as CAP_SETFCAP but for processes
+/**
+ *  CAP_SETPCAP
+ *  Same as CAP_SETFCAP but for processesa
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_set_pcap(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 30;
@@ -632,8 +781,14 @@ static bool check_set_pcap(cap_t caps_for_file, File_Info *fi, All_Results *ar, 
     return true;
 }
 
-// CAP_SETUID
-// Manipulatee process UID's
+/**
+ *  CAP_SETUID
+ *  Manipulatee process UID'sa
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_set_uid(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 31;
@@ -652,8 +807,14 @@ static bool check_set_uid(cap_t caps_for_file, File_Info *fi, All_Results *ar, A
     return true;
 }
 
-// CAP_SYS_ADMIN
-// perform load of low level operations
+/**
+ *  CAP_SYS_ADMIN
+ *  perform load of low level operationsa
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_sys_admin(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 32;
@@ -672,8 +833,14 @@ static bool check_sys_admin(cap_t caps_for_file, File_Info *fi, All_Results *ar,
     return true;
 }
 
-// CAP_SYS_BOOT
-// Perform reboots
+/**
+ *  CAP_SYS_BOOT
+ *  Perform rebootsa
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_reboot(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 33;
@@ -692,8 +859,14 @@ static bool check_reboot(cap_t caps_for_file, File_Info *fi, All_Results *ar, Ar
     return true;
 }
 
-// CAP_SYS_CHROOT
-// Allows you to change root
+/**
+ *  CAP_SYS_CHROOT
+ *  Allows you to change roota
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_sys_chroot(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 34;
@@ -712,8 +885,14 @@ static bool check_sys_chroot(cap_t caps_for_file, File_Info *fi, All_Results *ar
     return true;
 }
 
-// CAP_SYS_MODULE
-// Allows you to load and unload kernel modules
+/**
+ *  CAP_SYS_MODULE
+ *  Allows you to load and unload kernel modulesa
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_sys_module(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 35;
@@ -732,8 +911,14 @@ static bool check_sys_module(cap_t caps_for_file, File_Info *fi, All_Results *ar
     return true;
 }
 
-// CAP_SYS_NICE
-// Change kernels schelduling priorirties
+/**
+ *  CAP_SYS_NICE
+ *  Change kernels schelduling priorirtiesa
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_sys_nice(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 36;
@@ -752,8 +937,14 @@ static bool check_sys_nice(cap_t caps_for_file, File_Info *fi, All_Results *ar, 
     return true;
 }
 
-// CAP_SYS_PACCT
-// Change kernels schelduling priorirties
+/**
+ *  CAP_SYS_PACCT
+ *  Change kernels schelduling priorirtiesa
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_process_accounting(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 37;
@@ -772,8 +963,14 @@ static bool check_process_accounting(cap_t caps_for_file, File_Info *fi, All_Res
     return true;
 }
 
-// CAP_SYS_PTRACE
-// Allows the use of ptrace syscall
+/**
+ *  CAP_SYS_PTRACE
+ *  Allows the use of ptrace syscalla
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_ptrace(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 38;
@@ -792,8 +989,14 @@ static bool check_ptrace(cap_t caps_for_file, File_Info *fi, All_Results *ar, Ar
     return true;
 }
 
-// CAP_SYS_RESOURCE
-// TODO: figure out what this capability does does
+/**
+ *  CAP_SYS_RESOURCE
+ *  TODO: figure out what this capability does doesa
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_sys_resource(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 39;
@@ -812,8 +1015,14 @@ static bool check_sys_resource(cap_t caps_for_file, File_Info *fi, All_Results *
     return true;
 }
 
-// CAP_SYS_TIME
-// Change system clock and the hardware clock
+/**
+ *  CAP_SYS_TIME
+ *  Change system clock and the hardware clocka
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_sys_time(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 40;
@@ -832,8 +1041,14 @@ static bool check_sys_time(cap_t caps_for_file, File_Info *fi, All_Results *ar, 
     return true;
 }
 
-// CAP_SYS_TTY_CONFIG
-// Perform privilaged operations on TTY terminals
+/**
+ *  CAP_SYS_TTY_CONFIG
+ *  Perform privilaged operations on TTY terminalsa
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_sys_tty(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 41;
@@ -852,8 +1067,14 @@ static bool check_sys_tty(cap_t caps_for_file, File_Info *fi, All_Results *ar, A
     return true;
 }
 
-// CAP_SYSLOG
-// Perform privilaged syslog opertaions and view kernel addresses exposed via /proc
+/**
+ *  CAP_SYSLOG
+ *  Perform privilaged syslog opertaions and view kernel addresses exposed via /proca
+ * @param caps_for_file the capability that we're searching for
+ * @param fi the current files information 
+ * @param ar A struct containing all issues that enumy hass found 
+ * @param cmdline A struct containing all the runtime arguments 
+ */
 static bool check_syslog(cap_t caps_for_file, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id = 41;
@@ -872,10 +1093,17 @@ static bool check_syslog(cap_t caps_for_file, File_Info *fi, All_Results *ar, Ar
     return true;
 }
 
-// This function checks the capabilities for a file. The capabilities are either
-// Effective ->     The effective set contains the capabilities that are currently active
-// Inheritable ->   The permitted set contains the capabilities that the process has the right to use.
-// Permited ->      The inheritable set contains the capabilities that can be inherited by children to the process
+/**
+ * Searches 'caps_for_file' for 'search' 
+ * Effective ->     The effective set contains the capabilities that are currently active
+ * Inheritable ->   The permitted set contains the capabilities that the process has the right to use.
+ * Permited ->      The inheritable set contains the capabilities that can be inherited by children to the process
+ * @param caps_for_file the files capabilities
+ * @param search the capability that we're testing 
+ * @return CAP_PERMITTED
+ * @return CAP_INHERITABLE
+ * @return CAP_EFFECTIVE
+ */
 static int check_cap(cap_t caps_for_file, cap_value_t search)
 {
     cap_flag_t flag;                      // values for this type are CAP_EFFECTIVE, CAP_INHERITABLE or CAP_PERMITTED
@@ -902,7 +1130,11 @@ static int check_cap(cap_t caps_for_file, cap_value_t search)
     return 0;
 }
 
-// Just sets the issues other info value to the string representation of the flag
+/**
+ * Just sets the issues other info value to the string representation of the flag
+ * @param flag CAP_PERMITED | CAP_INHERITABLE | CAP_EFFECTIVE
+ * @param new_result the location of the new result
+ */
 static void set_other_info_to_cap_flag(cap_flag_t flag, Result *new_result)
 {
     if (flag == CAP_PERMITTED)

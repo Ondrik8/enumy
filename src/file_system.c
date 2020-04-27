@@ -254,3 +254,24 @@ bool can_read(File_Info *fi)
 {
     return access(fi->location, R_OK) == 0;
 }
+
+// Dont forget to free me
+// abc/def/hig -> hig
+char *get_file_name(char *full_path)
+{
+    char *s = strrchr(full_path, '/');
+    if (!s)
+        return strdup(full_path);
+    else
+        return strdup(s + 1);
+}
+
+// Dont forget to free me
+// abc/def/hig -> /abc/def
+char *get_dir_name(char *full_path)
+{
+    char *last_slash = NULL;
+    char *parent = NULL;
+    last_slash = strrchr(full_path, '\\');
+    return strndup(full_path, (char *)(last_slash - strlen(full_path) - 1));
+}

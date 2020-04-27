@@ -32,6 +32,16 @@
 
 int core_dump_scan(File_Info *fi, All_Results *ar, Args *cmdline);
 
+/**
+ * Given a file, this will test to see if the file is an elf and it's
+ * parsable. Then we test to see if the file is a core dump file 
+ * If the file is a core dump file then we test the permissions of the 
+ * file and raise issues 
+ * Note this currently cannot parse x64 MSB elf files 
+ * @param fi file information struct for the current file 
+ * @param ar a struct containing all of the results that enumy has found 
+ * @param cmdline a struct containing the command line arguments 
+ */
 int core_dump_scan(File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int findings = 0;

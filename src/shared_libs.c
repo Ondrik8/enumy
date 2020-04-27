@@ -163,13 +163,3 @@ static bool read_file(char *location, Vector *v)
     fclose(file);
     return true;
 }
-
-// Dont forget to free me
-static char *get_file_name(char *full_path)
-{
-    char *s = strrchr(full_path, '/');
-    if (!s)
-        return strdup(full_path);
-    else
-        return strdup(s + 1);
-}

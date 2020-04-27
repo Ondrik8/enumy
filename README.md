@@ -47,6 +47,7 @@ security vulnerabilities and hostspots
  -w <loc>     Only walk files in this directory (usefull for devlopment)
  -t <num>     Threads (default 4)
  -f           Run full scans
+ -d           Display debugging information
  -n           Enabled ncurses
  -h           Show help
  ```
@@ -82,8 +83,8 @@ Below is the ever growing list of scans that have been implemented.
 
 ### Full Scan
 
-- This is a superset of quick scan
-- Elf shared libary injection
+- Quick Scan
+- Binary analysis
 
 ## Scan Times
 

@@ -34,7 +34,13 @@ static int check_for_writable_shared_object(File_Info *fi, All_Results *ar, Args
 static double caclulate_file_entropy(char *file_location);
 static int search_conf_for_pass(File_Info *fi, All_Results *ar, Args *cmdline);
 
-// Kicks of other scans
+/**
+ * Performs all of the intersesting file scans on a given file 
+ * @param fi A struct containing the files information 
+ * @param ar a struct containing all of the results that enumy has previously found
+ * @param cmdline A struct containing the runtime arguments for enumy 
+ * @return the number of findings that the scan found
+ */
 int intresting_files_scan(File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int findings = 0;
@@ -45,7 +51,13 @@ int intresting_files_scan(File_Info *fi, All_Results *ar, Args *cmdline)
     return findings;
 }
 
-// Kicks off scans that require the file extensions to clasify the file
+/**
+ * This scan kicks off other scans based of the files extension 
+ * @param fi A struct containing the files information 
+ * @param ar a struct containing all of the results that enumy has previously found
+ * @param cmdline A struct containing the runtime arguments for enumy 
+ * @param the number of findings that the scan found
+ */
 static int extension_checker(File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int findings = 0;
@@ -137,7 +149,14 @@ static int extension_checker(File_Info *fi, All_Results *ar, Args *cmdline)
     return findings;
 }
 
-// Kick of scans that require the file name to classify the file
+/**
+ * Checks to see if the current file has a certain name. If the file does then this 
+ * function will kick of the relevant scans for the current file 
+ * @param fi A struct containing the files information 
+ * @param ar a struct containing all of the results that enumy has previously found
+ * @param cmdline A struct containing the runtime arguments for enumy 
+ * @return the number of findings that the scan found
+ */
 static int file_name_checker(File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int findings = 0;
@@ -162,8 +181,16 @@ static int file_name_checker(File_Info *fi, All_Results *ar, Args *cmdline)
     return findings;
 }
 
-// If the file has the string private key etc inside of it or the file has low entropy
-// then we will report this ass being true
+/**
+ * Only call with files that could contain encryption keys 
+ * returns false if the file is part of a test directory
+ * If the file has low entropy then report this as an encryption key if the permissions 
+ * of this file is too loose 
+ * @param fi A struct containing the files information 
+ * @param ar a struct containing all of the results that enumy has previously found
+ * @param cmdline A struct containing the runtime arguments for enumy 
+ * @return true if the file is thought to contain an encryption key 
+ */
 static bool check_for_encryption_key(File_Info *fi, All_Results *ar, Args *cmdline)
 {
     float entropy;
@@ -224,9 +251,15 @@ static bool check_for_encryption_key(File_Info *fi, All_Results *ar, Args *cmdli
     return true;
 }
 
-// This function is used to try and determine if a file such as x.rsa is the key
-// or the file is encrypted data. Key's should have low entropy and good encryption
-// should be indistingushable from random data. Note that this only works if the key encoded
+/**
+ * This function is used to try and determine if a file such as x.rsa is the key
+ * or the file is encrypted data. Key's should have low entropy and good encryption
+ * should be indistingushable from random data. Note that this only works if the key encoded
+ * @param fi A struct containing the files information 
+ * @param ar a struct containing all of the results that enumy has previously found
+ * @param cmdline A struct containing the runtime arguments for enumy 
+ * @return the files entropy or -1 if entropy calculations failed
+ */
 static double caclulate_file_entropy(char *file_location)
 {
     char str[ENTROPY_SIZE];
@@ -302,7 +335,15 @@ static double caclulate_file_entropy(char *file_location)
     return entropy;
 }
 
-// Maps the entired file into memory
+/**
+ * Only call if the file is a config file 
+ * loops through all of the lines in the config file and checks to see if the file 
+ * contains any references to passwords
+ * @param fi A struct containing the files information 
+ * @param ar a struct containing all of the results that enumy has previously found
+ * @param cmdline A struct containing the runtime arguments for enumy j
+ * @return 1 if found any references to passwords else 0
+ */
 static int search_conf_for_pass(File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int findings = 0;
@@ -343,6 +384,14 @@ static int search_conf_for_pass(File_Info *fi, All_Results *ar, Args *cmdline)
     return 0;
 }
 
+/**
+ * Checks to see if the current file is writable only call if the file is a shared 
+ * object 
+ * @param fi A struct containing the files information 
+ * @param ar a struct containing all of the results that enumy has previously found
+ * @param cmdline A struct containing the runtime arguments for enumy j
+ * @return 1 if found any references to passwords else 0
+ */
 static int check_for_writable_shared_object(File_Info *fi, All_Results *ar, Args *cmdline)
 {
     if (has_global_write(fi))

@@ -15,7 +15,13 @@
 int break_out_binary_scan(File_Info *fi, All_Results *ar, Args *cmdline);
 static void add_issue(int id, char *name, File_Info *fi, All_Results *ar, Args *cmdline);
 
-// Only called if the file is known to be SUID or GUID
+/**
+ * Should only be called if the file is known to be SUID or GUID or can be run as root e.g $sudo -l 
+ * Compares the current file and tests to see if it matches a list of known breakout binaries
+ * @param fi current files information 
+ * @param ar struct containing all of the results enumy has foundd
+ * @param cmdline list of cmdline arguments 
+ */
 int break_out_binary_scan(File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int id;
@@ -1191,6 +1197,14 @@ int break_out_binary_scan(File_Info *fi, All_Results *ar, Args *cmdline)
     return 0;
 }
 
+/**
+ * Adds a findings to the ar.
+ * @param id issues new id 
+ * @param name name of the breakout binary
+ * @param fi file information for the file 
+ * @param ar struct containing all the results that enumy has found on the system
+ * @param cmdline a struct continaing the runtime arguments for enumy 
+ */
 static void add_issue(int id, char *name, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     char issue_name[MAXSIZE];
