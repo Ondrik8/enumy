@@ -29,7 +29,7 @@
     The $ORIGIN value means replace with the binaries current directory 
 */
 
-#include "fs.h"
+#include "file_system.h"
 #include "main.h"
 #include "results.h"
 #include "scan.h"
@@ -106,18 +106,6 @@ static Lib_Info *get_lib_info(Elf_File *elf)
 
 static void free_lib_info(Lib_Info *lib_info)
 {
-    // if (lib_info->dt_needed != NULL)
-    // {
-    //     free(lib_info->dt_needed);
-    // }
-    // if (lib_info->dt_rpath != NULL)
-    // {
-    //     free(lib_info->dt_needed);
-    // }
-    // if (lib_info->dt_runpath != NULL)
-    // {
-    //     free(lib_info->dt_needed);
-    // }
     free(lib_info);
 }
 
@@ -131,7 +119,6 @@ static int test_missing_shared_libaries(Lib_Info *lib_info)
         return findings;
     }
 
-    // printf("---------------------------------------------------\n");
     // printf("DT_NEEDED:");
     // for (int i = 0; i < lib_info->dt_needed[0].size; i++)
     // {

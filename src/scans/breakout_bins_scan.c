@@ -5,7 +5,7 @@
     https://gtfobins.github.io/
 */
 
-#include "fs.h"
+#include "file_system.h"
 #include "main.h"
 #include "results.h"
 #include "scan.h"

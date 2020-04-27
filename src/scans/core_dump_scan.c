@@ -15,7 +15,7 @@
 
 #define _GNU_SOURCE
 
-#include "fs.h"
+#include "file_system.h"
 #include "main.h"
 #include "results.h"
 #include "scan.h"

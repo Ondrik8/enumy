@@ -10,7 +10,7 @@
 #include "main.h"
 #include "results.h"
 #include "utils.h"
-#include "fs.h"
+#include "file_system.h"
 #include "elf_parsing.h"
 
 #include <sys/types.h>
@@ -32,7 +32,6 @@ static bool check_for_encryption_key(File_Info *fi, All_Results *ar, Args *cmdli
 static int check_for_writable_shared_object(File_Info *fi, All_Results *ar, Args *cmdline);
 static double caclulate_file_entropy(char *file_location);
 static int search_conf_for_pass(File_Info *fi, All_Results *ar, Args *cmdline);
-static int search_line(unsigned char *line_start, unsigned char *line_end);
 
 // Kicks of other scans
 int intresting_files_scan(File_Info *fi, All_Results *ar, Args *cmdline)
@@ -225,6 +224,11 @@ static double caclulate_file_entropy(char *file_location)
     double entropy = 0;
 
     f = fopen(file_location, "r");
+    if (f == NULL)
+    {
+        return -1;
+    }
+
     for (len = 0; !feof(f) && len < ENTROPY_SIZE; len++)
     {
         current_fget = fgetc(f);
@@ -285,164 +289,41 @@ static double caclulate_file_entropy(char *file_location)
 // Maps the entired file into memory
 static int search_conf_for_pass(File_Info *fi, All_Results *ar, Args *cmdline)
 {
-
-    int fd;
     int findings = 0;
-    unsigned char *f_data, *f_data_end;
-    unsigned char *line_begin, *line_end;
+    char line[MAXSIZE];
+    FILE *file = fopen(fi->location, "r");
 
-    return findings;
-
-    // if (fi->stat->st_size == 0 || (fd = open(fi->location, O_RDONLY) == -1))
-    // {
-    //     return findings;
-    // }
-
-    // f_data = mmap(0, fi->stat->st_size, PROT_READ, MAP_SHARED, fd, 0);
-    // if (f_data == MAP_FAILED)
-    // {
-    //     close(fd);
-    //     return findings;
-    // }
-
-    // f_data_end = f_data + fi->stat->st_size;
-    // line_begin = line_end = f_data;
-
-    // while (true)
-    // {
-    //     // Itterate until we find a new line or EOF
-    //     while ((line_end < f_data_end) && (*line_end && '\n') && (*line_end != '\r') && (*line_end != 0x0a))
-    //     {
-    //         if (line_end - line_begin >= 3)
-    //         {
-    //             if (
-    //                 ((unsigned char)*line_end == 0xe2) &&
-    //                 ((unsigned char)*line_end - 1 == 0x90) &&
-    //                 ((unsigned char)*line_end - 2 == 0xa4))
-    //             {
-    //                 break; // utf8 new line
-    //             }
-    //         }
-    //         line_end++;
-    //     }
-    //     if (search_line(line_begin, line_end))
-    //     {
-    //         int id = 47;
-    //         char *name = "Config could contain passwords";
-    //         Result *new_result = create_new_issue();
-    //         set_id_and_desc(id, new_result);
-    //         set_issue_location(fi->location, new_result);
-    //         set_issue_name(name, new_result);
-    //         add_new_result_info(new_result, ar, cmdline);
-    //         findings++;
-    //         break;
-    //     }
-    //     if (line_end == f_data_end)
-    //     {
-    //         break;
-    //     }
-    //     else
-    //     {
-    //         line_end++;
-    //         line_begin = line_end;
-    //     }
-    // }
-
-    // close(fd);
-    // munmap((void *)f_data, fi->stat->st_size);
-    // return findings;
-}
-
-static int search_line(unsigned char *line_start, unsigned char *line_end)
-{
-    unsigned char *buffer = malloc((2 + (line_end - line_start)) * sizeof(unsigned char));
-    int loc = 0;
-    int findings = 0;
-    bool in_whitespace = true;
-    bool first_non_white = false;
-    bool equals_found = false;
-
-    if (buffer == NULL)
+    if (file == NULL)
     {
-        return 0;
+        return findings;
     }
-    for (unsigned char *i = line_start; i <= line_end; i++)
+
+    while (fgets(line, MAXSIZE, file))
     {
-        if (in_whitespace && (*i == ' ' || *i == '\t'))
+        if (line[0] == '#')
         {
-            first_non_white = true;
+            continue;
         }
-        else
+        if (
+            (strcasestr(line, "password=") != NULL) ||
+            (strcasestr(line, "passwd") != NULL) ||
+            (strcasestr(line, "private_key") != NULL) ||
+            (strcasestr(line, "privatekey") != NULL) ||
+            (strcasestr(line, "private-key") != NULL))
         {
-            if (first_non_white && *i == '#')
-            {
-                // line is commented
-                free(buffer);
-                return findings;
-            }
-            first_non_white = false;
-            in_whitespace = false;
-            if (*i == '=')
-            {
-                equals_found = true;
-            }
+            int id = 47;
+            char *name = "Config could contain passwords";
+            Result *new_result = create_new_issue();
+            set_id_and_desc(id, new_result);
+            set_issue_location(fi->location, new_result);
+            set_issue_name(name, new_result);
+            add_new_result_info(new_result, ar, cmdline);
+            fclose(file);
+            return 1;
         }
-        buffer[loc] = *i;
-        loc++;
     }
-    buffer[loc++] = '\0';
-
-    if (equals_found && strcasestr((char *)buffer, "password=") != NULL)
-    {
-        findings++;
-    }
-    if (equals_found && strcasestr((char *)buffer, "Password=") != NULL)
-    {
-        findings++;
-    }
-    if (equals_found && strcasestr((char *)buffer, "passwd") != NULL)
-    {
-        findings++;
-    }
-    if (equals_found && strcasestr((char *)buffer, "private_key=") != NULL)
-    {
-        findings++;
-    }
-    if (equals_found && strcasestr((char *)buffer, "private-key=") != NULL)
-    {
-        findings++;
-    }
-    if (equals_found && strcasestr((char *)buffer, "PrivateKey=") != NULL)
-    {
-        findings++;
-    }
-    if (equals_found && strcasestr((char *)buffer, "Private_Key=") != NULL)
-    {
-        findings++;
-    }
-    if (equals_found && strcasestr((char *)buffer, "password ") != NULL)
-    {
-        findings++;
-    }
-    if (equals_found && strcasestr((char *)buffer, "private_key ") != NULL)
-    {
-        findings++;
-    }
-    if (equals_found && strcasestr((char *)buffer, "private-key ") != NULL)
-    {
-        findings++;
-    }
-    if (equals_found && strcasestr((char *)buffer, "PrivateKey ") != NULL)
-    {
-        findings++;
-    }
-    if (equals_found && strcasestr((char *)buffer, "Private_Key ") != NULL)
-    {
-        findings++;
-    }
-
-    free(buffer);
-    return findings;
+    fclose(file);
+    return 0;
 }
 
 static int check_for_writable_shared_object(File_Info *fi, All_Results *ar, Args *cmdline)

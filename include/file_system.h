@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <vector.h>
 
 #include "results.h"
 
@@ -17,6 +18,13 @@ typedef struct File_Info
     char extension[MAX_EXTENSION_SIZE];
     struct stat *stat;
 } File_Info;
+
+typedef struct Shared_Lib_Info
+{
+    char location[MAXSIZE];
+    int size;
+    int used;
+} Shared_Lib_Info;
 
 void walk_file_system(char *entry_location, All_Results *all_results, Args *cmdline);
 
@@ -32,3 +40,7 @@ bool has_extension(File_Info *f, char *extension);
 bool can_read(File_Info *fi);
 
 int get_number_of_files_scanned();
+
+Vector *find_shared_libs();
+bool test_if_standard_shared_object(Vector *shared_libs, char *new_shared_lib);
+void free_shared_libs(Vector *v);

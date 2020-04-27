@@ -2,7 +2,7 @@
 
 #include "results.h"
 #include "gui.h"
-#include "fs.h"
+#include "file_system.h"
 #include "main.h"
 
 extern char *KNOW_GOOD_SUID[];

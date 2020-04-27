@@ -4,7 +4,7 @@
     use this to find SUID binaries and writeable config files etc
 */
 
-#include "fs.h"
+#include "file_system.h"
 #include "utils.h"
 #include "results.h"
 #include "scan.h"
@@ -114,8 +114,14 @@ static void scan_file_for_issues(Thread_Pool_Args *thread_pool_args)
     struct stat *stat_buf = malloc(sizeof(struct stat));
     int findings = 0;
 
-    if ((new_file == NULL) || (stat_buf == NULL))
+    if (stat_buf == NULL)
     {
+        free(thread_pool_args);
+        out_of_memory_err();
+    }
+    if (new_file == NULL)
+    {
+        free(thread_pool_args);
         out_of_memory_err();
     }
 
@@ -131,6 +137,7 @@ static void scan_file_for_issues(Thread_Pool_Args *thread_pool_args)
     {
         free(stat_buf);
         free(new_file);
+        free(thread_pool_args);
         return;
     }
 
@@ -139,6 +146,7 @@ static void scan_file_for_issues(Thread_Pool_Args *thread_pool_args)
     {
         free(stat_buf);
         free(new_file);
+        free(thread_pool_args);
         return;
     }
 
@@ -150,10 +158,6 @@ static void scan_file_for_issues(Thread_Pool_Args *thread_pool_args)
     findings += core_dump_scan(new_file, thread_pool_args->all_results, thread_pool_args->cmdline);
     findings += rpath_scan(new_file, thread_pool_args->all_results, thread_pool_args->cmdline);
 
-    if (findings > 1)
-    {
-        // printf("\n");
-    }
     free(stat_buf);
     free(new_file);
     free(thread_pool_args);

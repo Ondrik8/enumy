@@ -19,7 +19,7 @@
     elf_header -> program_header -> dynamic_header -> .dynamic -> .dynsym 
 */
 
-#include "fs.h"
+#include "file_system.h"
 #include "main.h"
 #include "results.h"
 #include "scan.h"

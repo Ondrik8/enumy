@@ -5,8 +5,9 @@
 #include "results.h"
 #include "main.h"
 #include "gui.h"
-#include "fs.h"
+#include "file_system.h"
 #include "utils.h"
+#include "vector.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -48,6 +49,10 @@ void start_scan(Ncurses_Layout *layout, All_Results *all_results, Args *args)
         .all_results = all_results,
         .cmdline = args};
 
+    args->valid_shared_libs = find_shared_libs();
+    // exit(EXIT_SUCCESS);
+    // args->valid_shared_libs = NULL;
+
     if (layout->current_category == 0x2342)
     {
         puts("I'm just here to make the compiler warning go away");
@@ -55,12 +60,13 @@ void start_scan(Ncurses_Layout *layout, All_Results *all_results, Args *args)
 
     if (!args->enabled_ncurses)
     {
-        puts("Walking file system");
+        printf("Walking file system at location -> %s\n", args->walk_dir);
     }
 
     // Walk the file system in the background while we perform other scans
-    pthread_create(&walk_thread, NULL, &create_walk_thread, &walk_args);
+    pthread_create(&walk_thread, NULL, create_walk_thread, &walk_args);
     pthread_join(walk_thread, (void **)&_);
     printf("Total files scanned -> %i\n", get_number_of_files_scanned());
     free_total_results(all_results);
+    free_shared_libs(args->valid_shared_libs);
 }

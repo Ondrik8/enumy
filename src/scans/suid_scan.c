@@ -11,7 +11,7 @@
 */
 
 #include "results.h"
-#include "fs.h"
+#include "file_system.h"
 #include "scan.h"
 #include "main.h"
 

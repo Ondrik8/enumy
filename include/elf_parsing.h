@@ -4,11 +4,10 @@
 #define _GNU_SOURCE
 #endif
 
-#include "fs.h"
 #include "main.h"
 #include "results.h"
 #include "scan.h"
-#include "fs.h"
+#include "file_system.h"
 
 #include <stdio.h>
 #include <err.h>

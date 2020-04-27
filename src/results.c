@@ -25,6 +25,9 @@
 #include "utils.h"
 #include "main.h"
 
+#include <error.h>
+#include <errno.h>
+
 #define COLOR_HIGH "\033[0;31m"   // red
 #define COLOR_MEDIUM "\033[0;33m" // yellow
 #define COLOR_LOW "\033[0;36m"    // blue
@@ -321,6 +324,14 @@ static void log_issue_to_screen(Result *new_result, char *category)
 
     snprintf(ls_cmd, MAXSIZE * 2, "ls -ltra \"%s\" --color=always", new_result->location);
     FILE *fp = popen(ls_cmd, "r");
+    if (fp == NULL)
+    {
+        printf("Failed printing new issue\n");
+        fprintf(stdout, "Error: %s", strerror(errno));
+        printf("ls -ltra %s\n", new_result->location);
+        printf("%s\n\n", ls_cmd);
+        return;
+    }
     while (fgets(ls_result, sizeof(ls_result), fp) != NULL)
     {
     }
