@@ -25,6 +25,12 @@ typedef struct Walk_Args
 
 static void *create_walk_thread(void *args);
 
+/**
+ * This is the entry point for the file_system scans. This thread
+ * will walk the entire file system and then test each file against
+ * tests.
+ * @param args This is a pointer the Walk_Args struct
+ */
 static void *create_walk_thread(void *args)
 {
     Walk_Args *arguments = (Walk_Args *)args;
@@ -39,6 +45,12 @@ static void *create_walk_thread(void *args)
     return NULL;
 }
 
+/**
+ * This kicks of all of the scans for enumy 
+ * @param layout a pointer to the ncurses layout
+ * @param all_results a structure containing all of the results that enumy finds
+ * @param args a structure containing all of the commandline arguments
+ */
 void start_scan(Ncurses_Layout *layout, All_Results *all_results, Args *args)
 {
     pthread_t walk_thread;

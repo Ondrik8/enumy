@@ -47,7 +47,6 @@ int intresting_files_scan(File_Info *fi, All_Results *ar, Args *cmdline)
 
     findings += extension_checker(fi, ar, cmdline);
     findings += file_name_checker(fi, ar, cmdline);
-    // findings += parent_dir_checker(fi, ar, cmdline);
     return findings;
 }
 
@@ -390,7 +389,7 @@ static int search_conf_for_pass(File_Info *fi, All_Results *ar, Args *cmdline)
  * @param fi A struct containing the files information 
  * @param ar a struct containing all of the results that enumy has previously found
  * @param cmdline A struct containing the runtime arguments for enumy j
- * @return 1 if found any references to passwords else 0
+ * @return 1 if found to be writable 
  */
 static int check_for_writable_shared_object(File_Info *fi, All_Results *ar, Args *cmdline)
 {

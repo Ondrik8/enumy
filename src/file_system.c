@@ -41,6 +41,15 @@ int get_number_of_files_scanned()
     return FILES_SCANNED;
 }
 
+/**
+ * Walks the file system, will skip files in ignore directory (cmdline arguments)
+ * For each path encountered it will pass the file to a thread pool 
+ * The thread pool will perform scans on the file 
+ * Note this scan will not walk the proc file system 
+ * @param entry_location the root location to walk 
+ * @param all_results a pointer to structure containinng all the future enumy findings 
+ * @param cmdline a pointer to the run time arguments 
+ */
 void walk_file_system(char *entry_location, All_Results *all_results, Args *cmdline)
 {
     DIR *dir;
@@ -91,6 +100,12 @@ void walk_file_system(char *entry_location, All_Results *all_results, Args *cmdl
     closedir(dir);
 }
 
+/**
+ * Adds the file at to the thread pool of scans to perform
+ * This function blocks if the thread pool is at maxiumum capacity 
+ * @param file_location the file to be scaned 
+ * @param file_name the name of the file that is going to be ccaned 
+ */
 static void add_file_to_thread_pool(char *file_location, char *file_name, All_Results *all_results, Args *cmdline)
 {
     Thread_Pool_Args *args = malloc(sizeof(Thread_Pool_Args));
@@ -113,6 +128,10 @@ static void add_file_to_thread_pool(char *file_location, char *file_name, All_Re
     thpool_add_work(cmdline->fs_threadpool, (void *)scan_file_for_issues, (void *)args);
 }
 
+/** 
+ * This kicks of all the scans for the current file in a seperate thread 
+ * @param thread_pool_args this is structure containing all the information needed to kick off the scan
+ */
 static void scan_file_for_issues(Thread_Pool_Args *thread_pool_args)
 {
     struct File_Info *new_file = (File_Info *)malloc(sizeof(File_Info));
@@ -173,9 +192,13 @@ static void scan_file_for_issues(Thread_Pool_Args *thread_pool_args)
     pthread_mutex_unlock(&FILES_SCANNED_MUTEX);
 }
 
-// Get the file extension the "." is not saved and an extension
-// abc.tar.gz would return .gz not .tar.gz
-// The extensions is saved in lowercase
+/**
+* Get the file extension the "." is not saved and an extension
+* abc.tar.gz would return .gz not .tar.gz
+* The extensions is saved in lowercase
+* @param buffer location to save the file extension
+* @param f_name the files name 
+*/
 static void get_file_extension(char *buf, char *f_name)
 {
     int size = strlen(f_name);
@@ -255,8 +278,12 @@ bool can_read(File_Info *fi)
     return access(fi->location, R_OK) == 0;
 }
 
-// Dont forget to free me
-// abc/def/hig -> hig
+/**
+ * Given a full path this function returns the file path 
+ * DONT forget to free the returned pointer
+ * @param full_path the files full path
+ * @return a heap pointer containing the file's name
+ */
 char *get_file_name(char *full_path)
 {
     char *s = strrchr(full_path, '/');
@@ -266,8 +293,12 @@ char *get_file_name(char *full_path)
         return strdup(s + 1);
 }
 
-// Dont forget to free me
-// abc/def/hig -> /abc/def
+/**
+ * Given a full path this function will return all the files parent directorys 
+ * DONT forget to free the returned pointer 
+ * @param full_path the files full path 
+ * @return a heap pointer containing the files's directory name 
+ */
 char *get_dir_name(char *full_path)
 {
     char *last_slash = NULL;

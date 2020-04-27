@@ -51,9 +51,12 @@ typedef struct UpdateGuiArgs
     Ncurses_Layout *layout;
 } UpdateGuiArgs;
 
-/* this function takes a pointer to a structure containing */
-/* the window layouts and then initilizes them with the terminals */
-/* current screen size */
+/**
+ * This function takes a pointer to a struct containing the window layouts 
+ * and then initilizes them with the terminals current screen size
+ * @param layout a struct containing the different GUI elements 
+ * @param all_results a pointer to a struct containing all of the results that enumy finds
+ */
 void init_ncurses_layout(Ncurses_Layout *layout, All_Results *all_results)
 {
     pthread_t logo_eye_blink_thread, update_res_thread;
@@ -121,6 +124,12 @@ void init_ncurses_layout(Ncurses_Layout *layout, All_Results *all_results)
     pthread_create(&logo_eye_blink_thread, NULL, &blink_logo_eyes, layout->logo);
 }
 
+/**
+ * This function setups the bar overview GUI element and sets the current 
+ * category to high 
+ * @param layout this is the ncures layout 
+ * @param all_results this is a structure that contains all the results that enumy has found
+ */
 void set_category_high(Ncurses_Layout *layout, All_Results *all_results)
 {
     werase(layout->bars);
@@ -142,6 +151,12 @@ void set_category_high(Ncurses_Layout *layout, All_Results *all_results)
     wrefresh(layout->bars);
 }
 
+/**
+ * This function setups the bar overview GUI element and sets the current 
+ * category to medium 
+ * @param layout this is the ncures layout 
+ * @param all_results this is a structure that contains all the results that enumy has found
+ */
 void set_category_medium(Ncurses_Layout *layout, All_Results *all_results)
 {
     werase(layout->bars);
@@ -163,6 +178,12 @@ void set_category_medium(Ncurses_Layout *layout, All_Results *all_results)
     wrefresh(layout->bars);
 }
 
+/**
+ * This function setups the bar overview GUI element and sets the current 
+ * category to low 
+ * @param layout this is the ncures layout 
+ * @param all_results this is a structure that contains all the results that enumy has found
+ */
 void set_category_low(Ncurses_Layout *layout, All_Results *all_results)
 {
     werase(layout->bars);
@@ -184,6 +205,12 @@ void set_category_low(Ncurses_Layout *layout, All_Results *all_results)
     wrefresh(layout->bars);
 }
 
+/**
+ * This function setups the bar overview GUI element and sets the current 
+ * category to info 
+ * @param layout this is the ncures layout 
+ * @param all_results this is a structure that contains all the results that enumy has found
+ */
 void set_category_info(Ncurses_Layout *layout, All_Results *all_results)
 {
     werase(layout->bars);
@@ -205,7 +232,11 @@ void set_category_info(Ncurses_Layout *layout, All_Results *all_results)
     wrefresh(layout->bars);
 }
 
-/* Make the bull's eyes blink */
+/**
+ * This function is the entry point for a thread that makes the ascii arts
+ * eyes blink 
+ * @param logo_window this is the ncurese window for the ascii art
+ */
 static void *blink_logo_eyes(void *logo_window)
 {
     bool eye = TRUE;
@@ -227,6 +258,9 @@ static void *blink_logo_eyes(void *logo_window)
     return NULL;
 }
 
+/**
+ * Setups all the colour schemes for the GUI
+ */
 static void setup_colour_scheme(void)
 {
     start_color();
@@ -241,6 +275,10 @@ static void setup_colour_scheme(void)
     init_pair(INFO_COLOUR_SCHEME, COLOR_GREEN, COLOR_BLACK);
 }
 
+/**
+ * This function setups up the ascii art for the GUI
+ * @param logo_window this is the window containing the ascii 
+ */
 static void setup_logo(WINDOW *logo_window)
 {
     wattron(logo_window, COLOR_PAIR(1));
@@ -259,6 +297,11 @@ static void setup_logo(WINDOW *logo_window)
     wrefresh(logo_window);
 }
 
+/**
+ * This function sets up the bar oview and sets the default category to 
+ * high 
+ * @param bars_window this is the ncursees window
+ */
 static void setup_bars(WINDOW *bars_window)
 {
     werase(bars_window);
@@ -280,6 +323,10 @@ static void setup_bars(WINDOW *bars_window)
     wrefresh(bars_window);
 }
 
+/**
+ * This setups the main overview window
+ * @param main_window this is a pointer to the ncures main overview window
+ */
 static void setup_main(WINDOW *main_window)
 {
     wattron(main_window, COLOR_PAIR(3));
@@ -292,6 +339,11 @@ static void setup_main(WINDOW *main_window)
     wrefresh(main_window);
 }
 
+/** 
+ * This function displays the current users output for 
+ * $id 
+ * @param id_window this is a pointer to the nucurses id window
+ */
 static void setup_id(WINDOW *id_window)
 {
     char id_summary[1024];
@@ -308,6 +360,11 @@ static void setup_id(WINDOW *id_window)
     pclose(fp);
 }
 
+/**
+ * This function is the entry point for a thread 
+ * The thread will constantly update the GUI
+ * @param gui_args This struct contains the ncures layout and a pointer to the results
+ */
 static void *update_gui(void *gui_args)
 {
     UpdateGuiArgs *args = (UpdateGuiArgs *)gui_args;
@@ -333,6 +390,11 @@ static void *update_gui(void *gui_args)
     return NULL;
 }
 
+/**
+ * This function will update the main overview table
+ * @param all_results This is a pointer to all of the results that enumy has found 
+ * @param layout This is the ncures layouts 
+ */
 void update_table(All_Results *all_results, Ncurses_Layout *layout)
 {
     int i = 1;
@@ -372,7 +434,11 @@ void update_table(All_Results *all_results, Ncurses_Layout *layout)
     wrefresh(layout->main);
 }
 
-// This function updates the bars in the top right corner
+/**
+ * This function updates the histogram for the issue count 
+ * @param all_results this is issues that enumy has found 
+ * @param layout this is the ncureses layout 
+ */
 void update_bars(All_Results *all_results, Ncurses_Layout *layout)
 {
     double high_bar_len, medium_bar_len, low_bar_len, info_bar_len;
@@ -484,6 +550,12 @@ void update_bars(All_Results *all_results, Ncurses_Layout *layout)
     wrefresh(layout->bars);
 }
 
+/**
+ * This findings the current selected result category (high, low etc) and returns 
+ * the pointer to the results for that given category 
+ * @param all_results this is a pointer to the results 
+ * @param layout this is a pointer to the ncurese layout 
+ */
 static Result *get_selected_linked_list(All_Results *all_results, Ncurses_Layout *layout)
 {
     switch (layout->current_category)
