@@ -24,6 +24,7 @@
 #include "results.h"
 #include "utils.h"
 #include "main.h"
+#include "debug.h"
 
 #include <error.h>
 #include <errno.h>
@@ -326,10 +327,7 @@ static void log_issue_to_screen(Result *new_result, char *category)
     FILE *fp = popen(ls_cmd, "r");
     if (fp == NULL)
     {
-        printf("Failed printing new issue\n");
-        fprintf(stdout, "Error: %s", strerror(errno));
-        printf("ls -ltra %s\n", new_result->location);
-        printf("%s\n\n", ls_cmd);
+        DEBUG_PRINT("Failed to run command -> %s\n", ls_cmd);
         return;
     }
     while (fgets(ls_result, sizeof(ls_result), fp) != NULL)
@@ -440,8 +438,7 @@ static void add_new_issue(Result *new_result, All_Results *all_results, int cate
         break;
 
     default:
-        puts("Programming error, category was not found");
-        printf("Category -> %i\n", category);
+        DEBUG_PRINT("Programming error, category was not found -> %i\n", category);
     }
     pthread_mutex_unlock(&all_results->mutex);
 }

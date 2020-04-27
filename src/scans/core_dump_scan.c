@@ -20,6 +20,7 @@
 #include "results.h"
 #include "scan.h"
 #include "elf_parsing.h"
+#include "debug.h"
 
 #include <stdio.h>
 #include <err.h>
@@ -52,6 +53,7 @@ int core_dump_scan(File_Info *fi, All_Results *ar, Args *cmdline)
     Elf_File *elf = parse_elf(fi);
     if (elf == NULL)
     {
+        DEBUG_PRINT("Failed to parse elf at location -> %s\n", fi->location);
         return findings;
     }
 

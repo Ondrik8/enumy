@@ -12,6 +12,7 @@
 #include "utils.h"
 #include "file_system.h"
 #include "elf_parsing.h"
+#include "debug.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -58,6 +59,7 @@ static int extension_checker(File_Info *fi, All_Results *ar, Args *cmdline)
     case 'c':
         if (strcmp(fi->extension, "config") == 0)
             findings += search_conf_for_pass(fi, ar, cmdline);
+
         else if (strcmp(fi->extension, "conf") == 0)
             findings += search_conf_for_pass(fi, ar, cmdline);
         break;
@@ -93,16 +95,22 @@ static int extension_checker(File_Info *fi, All_Results *ar, Args *cmdline)
     case 'p':
         if (strcmp(fi->extension, "ini") == 0)
             findings += (search_conf_for_pass(fi, ar, cmdline) == true) ? 1 : 0;
+
         else if (strcmp(fi->extension, "php") == 0)
             findings += (search_conf_for_pass(fi, ar, cmdline) == true) ? 1 : 0;
+
         else if (strcmp(fi->extension, "password") == 0)
             findings += (check_for_encryption_key(fi, ar, cmdline) == true) ? 1 : 0;
+
         else if (strcmp(fi->extension, "passwords") == 0)
             findings += (check_for_encryption_key(fi, ar, cmdline) == true) ? 1 : 0;
+
         else if (strcmp(fi->extension, "private") == 0)
             findings += (check_for_encryption_key(fi, ar, cmdline) == true) ? 1 : 0;
+
         else if (strcmp(fi->extension, "pk") == 0)
             findings += (check_for_encryption_key(fi, ar, cmdline) == true) ? 1 : 0;
+
         break;
     case 'r':
         if (strcmp(fi->extension, "rsa") == 0)
@@ -116,8 +124,10 @@ static int extension_checker(File_Info *fi, All_Results *ar, Args *cmdline)
         // .sqlite
         if (strcmp(fi->extension, "secret") == 0)
             findings += (check_for_encryption_key(fi, ar, cmdline) == true) ? 1 : 0;
+
         else if (strcmp(fi->extension, "so") == 0)
             findings += check_for_writable_shared_object(fi, ar, cmdline);
+
         break;
     case 'v':
         // .vpn
@@ -189,10 +199,14 @@ static bool check_for_encryption_key(File_Info *fi, All_Results *ar, Args *cmdli
     }
 
     entropy = caclulate_file_entropy(fi->location);
-    if (entropy > 7.0 || entropy == -1)
+    if (entropy > 7.0)
     {
-        // Not sure if we care about reporting encrypted data
         return false;
+    }
+
+    if (entropy == -1)
+    {
+        DEBUG_PRINT("Failed to calculate entropy for file at location -> %s\n", fi->location);
     }
 
     if (getuid() == 0 && fi->stat->st_uid == 0)
@@ -226,6 +240,7 @@ static double caclulate_file_entropy(char *file_location)
     f = fopen(file_location, "r");
     if (f == NULL)
     {
+        DEBUG_PRINT("Failed to open file at location (Entropy) -> %s\n", file_location);
         return -1;
     }
 
@@ -254,6 +269,7 @@ static double caclulate_file_entropy(char *file_location)
     hist = (unsigned int *)calloc(len, sizeof(int));
     if (hist == NULL)
     {
+        DEBUG_PRINT("Failed to allocate %li bytes during calloc entropy -> %s\n", len * sizeof(int), file_location);
         return -1;
     }
 
@@ -295,6 +311,7 @@ static int search_conf_for_pass(File_Info *fi, All_Results *ar, Args *cmdline)
 
     if (file == NULL)
     {
+        DEBUG_PRINT("Failed to open file at location -> %s\n", fi->location);
         return findings;
     }
 
@@ -330,9 +347,10 @@ static int check_for_writable_shared_object(File_Info *fi, All_Results *ar, Args
 {
     if (has_global_write(fi))
     {
+        int id = 48;
         char *name = "World writable shared object found";
         Result *new_result = create_new_issue();
-        set_id_and_desc(48, new_result);
+        set_id_and_desc(id, new_result);
         set_issue_location(fi->location, new_result);
         set_issue_name(name, new_result);
         add_new_result_high(new_result, ar, cmdline);

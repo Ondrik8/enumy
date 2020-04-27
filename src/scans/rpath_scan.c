@@ -29,11 +29,16 @@
     The $ORIGIN value means replace with the binaries current directory 
 */
 
+#define _GNU_SOURCE
+
 #include "file_system.h"
 #include "main.h"
 #include "results.h"
 #include "scan.h"
 #include "elf_parsing.h"
+#include "debug.h"
+#include "utils.h"
+#include "vector.h"
 
 #include <stdio.h>
 #include <err.h>
@@ -42,6 +47,10 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <sys/mman.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 typedef struct Lib_Info
 {
@@ -51,7 +60,7 @@ typedef struct Lib_Info
 } Lib_Info;
 
 int rpath_scan(File_Info *fi, All_Results *ar, Args *cmdline);
-static int test_missing_shared_libaries(Lib_Info *lib_info);
+static int test_missing_shared_libaries(Lib_Info *lib_info, File_Info *fi, All_Results *ar, Args *cmdline);
 static int test_injectable_shared_libaries(Lib_Info *lib_info);
 static Lib_Info *get_lib_info(Elf_File *elf);
 static void free_lib_info(Lib_Info *lib_info);
@@ -77,6 +86,7 @@ int rpath_scan(File_Info *fi, All_Results *ar, Args *cmdline)
     Elf_File *elf = parse_elf(fi);
     if (elf == NULL)
     {
+        DEBUG_PRINT("Failed to parse elf at location -> %s\n", fi->location);
         return findings;
     }
 
@@ -85,7 +95,7 @@ int rpath_scan(File_Info *fi, All_Results *ar, Args *cmdline)
     Lib_Info *lib_info = get_lib_info(elf);
 
     findings += test_injectable_shared_libaries(lib_info);
-    findings += test_missing_shared_libaries(lib_info);
+    findings += test_missing_shared_libaries(lib_info, fi, ar, cmdline);
 
     close_elf(elf, fi);
     free_lib_info(lib_info);
@@ -96,6 +106,11 @@ int rpath_scan(File_Info *fi, All_Results *ar, Args *cmdline)
 static Lib_Info *get_lib_info(Elf_File *elf)
 {
     Lib_Info *lib_info = malloc(sizeof(Lib_Info));
+
+    if (lib_info == NULL)
+    {
+        out_of_memory_err();
+    }
 
     lib_info->dt_needed = search_dynamic_for_value(elf, DT_NEEDED);
     lib_info->dt_rpath = search_dynamic_for_value(elf, DT_RPATH);
@@ -109,7 +124,7 @@ static void free_lib_info(Lib_Info *lib_info)
     free(lib_info);
 }
 
-static int test_missing_shared_libaries(Lib_Info *lib_info)
+static int test_missing_shared_libaries(Lib_Info *lib_info, File_Info *fi, All_Results *ar, Args *cmdline)
 {
     int findings = 0;
 
@@ -119,32 +134,30 @@ static int test_missing_shared_libaries(Lib_Info *lib_info)
         return findings;
     }
 
-    // printf("DT_NEEDED:");
-    // for (int i = 0; i < lib_info->dt_needed[0].size; i++)
-    // {
-    //     printf("-> %s", lib_info->dt_needed[i].tag_value);
-    // }
+    for (int i = 0; i < lib_info->dt_needed[0].size; i++)
+    {
+        if (strcasestr(lib_info->dt_needed[0].tag_value, ".so") == NULL)
+        {
+            DEBUG_PRINT("Probably failed to parse DT_NEEDED at location %s with value -> '%s'\n", fi->location, lib_info->dt_needed[i].tag_value);
+            continue;
+        }
+        else
+        {
+            bool found = test_if_standard_shared_object(cmdline->valid_shared_libs, lib_info->dt_needed[i].tag_value);
+            if (!found)
+            {
+                int id = 233;
+                char name[MAXSIZE];
+                Result *new_result = create_new_issue();
 
-    // if (lib_info->dt_runpath != NULL)
-    // {
-    //     printf("\n");
-    //     printf("DT_RUNPATH:");
-    //     for (int i = 0; i < lib_info->dt_runpath[0].size; i++)
-    //     {
-    //         printf("-> %s", lib_info->dt_runpath[i].tag_value);
-    //     }
-    // }
-    // if (lib_info->dt_rpath != NULL)
-    // {
-    //     printf("\n");
-    //     printf("DT_RPATH:");
-    //     for (int i = 0; i < lib_info->dt_rpath[0].size; i++)
-    //     {
-    //         printf("-> %s", lib_info->dt_rpath[i].tag_value);
-    //     }
-    // }
-    // printf("\n");
-    // printf("---------------------------------------------------\n");
+                snprintf(name, MAXSIZE, "Missing shared libary %s", lib_info->dt_needed[i].tag_value);
+                set_id_and_desc(id, new_result);
+                set_issue_location(fi->location, new_result);
+                set_issue_name(name, new_result);
+                add_new_result_info(new_result, ar, cmdline);
+            }
+        }
+    }
     return findings;
 }
 

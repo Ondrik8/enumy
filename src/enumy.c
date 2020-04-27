@@ -16,6 +16,7 @@
 #include "gui.h"
 #include "scan.h"
 #include "results.h"
+#include "debug.h"
 
 #define KEY_J 106
 #define KEY_K 107
@@ -26,6 +27,8 @@
 #define KEY_DEL_CURRENT 100
 #define KEY_DEL_ALL_ID 68
 #define KEY_QUIT 113
+
+bool DEBUG = false;
 
 typedef struct UserInputThreadArgs
 {
@@ -65,6 +68,7 @@ void help()
     puts(" -w <loc>     Only walk files in this directory (usefull for devlopment)");
     puts(" -t <num>     Threads (default 4)");
     puts(" -f           Run full scans");
+    puts(" -d           Debug mode");
     puts(" -n           Enabled ncurses");
     puts(" -h           Show help");
     exit(0);
@@ -118,6 +122,17 @@ void *handle_user_input(void *user_input_args)
     return NULL;
 }
 
+void show_runtime_args(Args *args)
+{
+    printf("Save Location   -> %s\n", args->save_location);
+    printf("Ignore Dir      -> %s\n", args->ignore_scan_dir);
+    printf("Walk Dir        -> %s\n", args->ignore_scan_dir);
+    printf("Walk Dir        -> %s\n", args->ignore_scan_dir);
+    printf("Full Scan       -> %s\n", args->enabled_full_scans ? "true" : "false");
+    printf("Ncurses         -> %s\n", args->enabled_ncurses ? "true" : "false");
+    printf("Threads         -> %i\n", args->fs_threads);
+}
+
 int main(int argc, char *argv[])
 {
     int opt;
@@ -131,6 +146,7 @@ int main(int argc, char *argv[])
     args->enabled_ncurses = false;
     args->fs_threads = 4;
 
+    DEBUG = false;
     struct Ncurses_Layout nlayout = {
         .logo = NULL,
         .bars = NULL,
@@ -145,7 +161,7 @@ int main(int argc, char *argv[])
 
     signal(SIGINT, sigint_handler);
 
-    while ((opt = getopt(argc, argv, "fhno:i:w:t:")) != -1)
+    while ((opt = getopt(argc, argv, "dfhno:i:w:t:")) != -1)
     {
         switch (opt)
         {
@@ -165,9 +181,11 @@ int main(int argc, char *argv[])
         case 'i':
             strncpy(args->ignore_scan_dir, optarg, MAXSIZE);
             break;
+
         case 'w':
             strncpy(args->walk_dir, optarg, MAXSIZE);
             break;
+
         case 't':
             userinput_threads = atoi(optarg);
             if (userinput_threads == 0)
@@ -178,8 +196,13 @@ int main(int argc, char *argv[])
             }
             args->fs_threads = userinput_threads;
             break;
+
         case 'n':
             args->enabled_ncurses = true;
+            break;
+
+        case 'd':
+            DEBUG = true;
             break;
 
         default:
@@ -204,8 +227,12 @@ int main(int argc, char *argv[])
     }
     else
     {
-        puts("");
         banner();
+        printf("\n\n");
+        if (DEBUG)
+        {
+            show_runtime_args(args);
+        }
         puts("\nStarting scan");
         start_scan(&nlayout, all_results, args);
     }

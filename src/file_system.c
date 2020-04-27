@@ -9,6 +9,7 @@
 #include "results.h"
 #include "scan.h"
 #include "thpool.h"
+#include "debug.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -74,6 +75,10 @@ void walk_file_system(char *entry_location, All_Results *all_results, Args *cmdl
                 {
                     continue;
                 }
+                if (strcmp("/proc", file_location) == 0)
+                {
+                    continue;
+                }
                 strcat(file_location, "/");
                 if (strcmp(cmdline->ignore_scan_dir, file_location) == 0)
                 {
@@ -135,6 +140,7 @@ static void scan_file_for_issues(Thread_Pool_Args *thread_pool_args)
     }
     else
     {
+        DEBUG_PRINT("lstat failed to get information for -> %s\n", new_file->location);
         free(stat_buf);
         free(new_file);
         free(thread_pool_args);
@@ -176,8 +182,9 @@ static void get_file_extension(char *buf, char *f_name)
     int i = 0;
     char current;
 
-    if (size > MAX_FILE_SIZE)
+    if (size > MAX_FILE_SIZE - 1)
     {
+        DEBUG_PRINT("Found a file with an extension bigger than buffer size -> %s\n", f_name);
         return;
     }
 

@@ -7,6 +7,7 @@
 #include "file_system.h"
 #include "utils.h"
 #include "vector.h"
+#include "debug.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -30,8 +31,6 @@ static char *get_file_name(char *full_path);
 Vector *find_shared_libs()
 {
     char *walk_location;
-    // Vector *ld_confd_vec = malloc(sizeof(Vector));     // contains list of files in SHARED_LIBS_CONFS
-    // Vector *ld_confd_res_vec = malloc(sizeof(Vector)); // contains the lines of the files in SHARED_LIBS_CONFS
 
     Vector ld_confd_vec;
     Vector ld_confd_res_vec;
@@ -56,13 +55,16 @@ Vector *find_shared_libs()
         walk_location = vector_get(&ld_confd_res_vec, i);
         if (access(walk_location, R_OK) != 0)
         {
-            printf("Failed finding shared objects in -> ");
-            printf("%s\n", walk_location);
+            DEBUG_PRINT("Failed finding shared objects in -> %s\n", walk_location);
             continue;
         }
         walk(walk_location, shared_libs);
         free(vector_get(&ld_confd_res_vec, i));
     }
+
+    walk("/usr/lib/", shared_libs);
+    walk("/usr/lib32/", shared_libs);
+    walk("/usr/lib64/", shared_libs);
 
     vector_free(&ld_confd_vec);
     vector_free(&ld_confd_res_vec);
@@ -145,15 +147,16 @@ static bool read_file(char *location, Vector *v)
 
     if (file == NULL)
     {
+        DEBUG_PRINT("Failed to open potential shared lib at location -> %s\n", location);
         return false;
     }
     while (fgets(line, sizeof(line), file))
     {
         char *new_line = malloc(MAXSIZE);
         strncpy(new_line, line, MAXSIZE - 1);
-        if (new_line[strlen(new_line) - 1] == '\n')
+        if (strlen(new_line) > 2 && new_line[strlen(new_line) - 1] == '\n')
         {
-            new_line[strlen(new_line) - 1] = '\0';
+            new_line[strlen(new_line) - 1] = '/';
         }
         vector_add(v, new_line);
     }

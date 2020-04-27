@@ -25,6 +25,7 @@
 #include "scan.h"
 #include "utils.h"
 #include "elf_parsing.h"
+#include "debug.h"
 
 #include <stdio.h>
 #include <err.h>
@@ -154,6 +155,7 @@ Elf_File *parse_elf(File_Info *fi)
     if (file->header->e_ident[EI_DATA] == ELFDATA2MSB && magic_result == X64)
     {
         // TODO: Support 64 bit elf's with most significant bit first
+        DEBUG_PRINT("Found a 64bit binary with most significat bit enabled, skipping parsing of this file -> %s\n", fi->location);
         close_elf(file, fi);
         return NULL;
     }
@@ -161,12 +163,14 @@ Elf_File *parse_elf(File_Info *fi)
     file->sections = elf_sheader(file->address);
     if (file->sections == NULL)
     {
+        DEBUG_PRINT("Failed to parse elf's section headers for file -> %s\n", fi->location);
         close_elf(file, fi);
         return NULL;
     }
     file->program_headers = elf_program_header(file);
     if (file->program_headers == NULL)
     {
+        DEBUG_PRINT("Failed to parse elf's program headers for file -> %s\n", fi->location);
         close_elf(file, fi);
         return NULL;
     }
@@ -273,7 +277,7 @@ static Elf_Off elf_dynamic_strings_offset(Elf_File *file)
 {
     if (file->header->e_shnum + ((Elf_Addr)file->sections - (Elf_Addr)file->address) > (long unsigned int)file->fi->stat->st_size)
     {
-        // corrupted elf file ?
+        DEBUG_PRINT("Failed parse elf's sections, offset is bigger than mapped memory -> %s\n", file->fi->location);
         return 0;
     }
     for (Elf_Off i = 0; i < file->header->e_shnum; i++)
@@ -282,7 +286,7 @@ static Elf_Off elf_dynamic_strings_offset(Elf_File *file)
         {
             if (file->sections[i].sh_offset > (long unsigned int)file->fi->stat->st_size)
             {
-                // corrupted elf file?
+                DEBUG_PRINT("Failed parse elf's dynamic strings, offset is bigger than mapped memory -> %s\n", file->fi->location);
                 return 0;
             }
             return file->sections[i].sh_offset;

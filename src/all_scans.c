@@ -50,8 +50,6 @@ void start_scan(Ncurses_Layout *layout, All_Results *all_results, Args *args)
         .cmdline = args};
 
     args->valid_shared_libs = find_shared_libs();
-    // exit(EXIT_SUCCESS);
-    // args->valid_shared_libs = NULL;
 
     if (layout->current_category == 0x2342)
     {
